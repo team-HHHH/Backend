@@ -3,11 +3,14 @@ package com.hhhh.dodream.domain.user.entity;
 import com.hhhh.dodream.domain.user.dto.request.UserUpdateRequestDto;
 import com.hhhh.dodream.domain.user.dto.response.UserInquiryResponseDto;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.util.ObjectUtils;
 
 @Entity
+@Getter
 @Table(name = "user")
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserEntity {
     @Id
@@ -18,10 +21,10 @@ public class UserEntity {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "login_id")
+    @Column(name = "login_id", nullable = false)
     private String loginId;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "nickname")
@@ -32,6 +35,9 @@ public class UserEntity {
 
     @Column(name = "profile_img")
     private String imagePath;
+
+    @Column(name = "role", nullable = false)
+    private String role;
 
     public UserInquiryResponseDto toInquiryDto() {
         return UserInquiryResponseDto.builder()
@@ -47,13 +53,13 @@ public class UserEntity {
         String nickname = updateRequestDto.getNickname();
         String password = updateRequestDto.getPassword();
         String address = updateRequestDto.getAddress();
-        if(nickname!=null){
+        if(ObjectUtils.isEmpty(nickname)){
             this.nickname=nickname;
         }
-        if(password!=null){
+        if(ObjectUtils.isEmpty(password)){
             this.password =password;
         }
-        if(address!=null){
+        if(ObjectUtils.isEmpty(address)){
             this.address=address;
         }
     }
