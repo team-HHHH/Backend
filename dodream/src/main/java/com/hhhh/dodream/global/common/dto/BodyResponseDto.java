@@ -16,7 +16,7 @@ public class BodyResponseDto<T> extends ResponseDto {
         return new BodyResponseDto<>(result, body);
     }
 
-    public static <T> BodyResponseDto<T> onSuccess(String message, T body){
+    public static <T> BodyResponseDto<T> generalSuccess(String message, T body){
         ResultDto result = new ResultDto(200, message);
         return new BodyResponseDto<>(result, body);
     }

@@ -14,12 +14,12 @@ public class ResponseDto {
         return new ResponseDto(result);
     }
 
-    public static ResponseDto onSuccess(String message) {
+    public static ResponseDto generalSuccess(String message) {
         ResultDto result = new ResultDto(200, message);
         return new ResponseDto(result);
     }
 
-    public static ResponseDto onFailed(String message) {
+    public static ResponseDto generalFailed(String message) {
         ResultDto result = new ResultDto(400, message);
         return new ResponseDto(result);
     }
