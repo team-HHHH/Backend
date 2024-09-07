@@ -25,8 +25,6 @@ public class UserService {
     public void update(UserUpdateRequestDto updateRequestDto, Long userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("db에 없는 데이터입니다."));
-        String EncodedPassword = passwordEncoder.encode(updateRequestDto.getPassword());
-        updateRequestDto.setPassword(EncodedPassword);
         user.updateEntity(updateRequestDto);
         userRepository.save(user);
     }

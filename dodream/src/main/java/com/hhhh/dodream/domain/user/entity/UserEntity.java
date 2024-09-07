@@ -51,15 +51,11 @@ public class UserEntity {
 
     public void updateEntity(UserUpdateRequestDto updateRequestDto){
         String nickname = updateRequestDto.getNickname();
-        String password = updateRequestDto.getPassword();
         String address = updateRequestDto.getAddress();
-        if(ObjectUtils.isEmpty(nickname)){
+        if(!ObjectUtils.isEmpty(nickname)){
             this.nickname=nickname;
         }
-        if(ObjectUtils.isEmpty(password)){
-            this.password =password;
-        }
-        if(ObjectUtils.isEmpty(address)){
+        if(!ObjectUtils.isEmpty(address)){
             this.address=address;
         }
     }
