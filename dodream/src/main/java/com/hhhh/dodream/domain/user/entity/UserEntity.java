@@ -24,6 +24,7 @@ public class UserEntity {
     @Column(name = "login_id", nullable = false)
     private String loginId;
 
+    @Setter
     @Column(name = "password", nullable = false)
     private String password;
 

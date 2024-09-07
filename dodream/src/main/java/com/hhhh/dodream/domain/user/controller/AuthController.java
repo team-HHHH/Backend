@@ -7,10 +7,7 @@ import com.hhhh.dodream.global.common.dto.BodyResponseDto;
 import com.hhhh.dodream.global.common.dto.ResponseDto;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,14 +24,14 @@ public class AuthController {
 
     @PostMapping("/login/custom")
     public ResponseDto customLogin(HttpServletResponse response,
-                                   UserLoginRequestDto loginRequestDto) {
+                                   @RequestBody UserLoginRequestDto loginRequestDto) {
         UserLoginResponseDto body = authService.customLogin(response, loginRequestDto);
         return BodyResponseDto.generalSuccess("로그인 성공", body);
     }
 
     @PostMapping("/login/custom")
     public ResponseDto oauthLogin(HttpServletResponse response,
-                                  UserLoginRequestDto loginRequestDto) {
+                                  @RequestBody UserLoginRequestDto loginRequestDto) {
         UserLoginResponseDto body = authService.oauthLogin(response, loginRequestDto);
         return BodyResponseDto.generalSuccess("로그인 성공", body);
     }
