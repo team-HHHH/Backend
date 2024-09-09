@@ -1,5 +1,6 @@
 package com.hhhh.dodream.domain.user.entity;
 
+import com.hhhh.dodream.domain.user.dto.request.UserRegisterDetailRequestDto;
 import com.hhhh.dodream.domain.user.dto.request.UserUpdateRequestDto;
 import com.hhhh.dodream.domain.user.dto.response.UserInquiryResponseDto;
 import jakarta.persistence.*;
@@ -62,5 +63,18 @@ public class UserEntity {
         if(ObjectUtils.isEmpty(address)){
             this.address=address;
         }
+    }
+
+    public void registerDetail(UserRegisterDetailRequestDto dto, String imagePath){
+        this.nickname = dto.getNickName();
+        this.address = dto.getAddress();
+        this.imagePath = imagePath;
+    }
+
+    public UserEntity(String email, String loginId, String password) {
+        this.email = email;
+        this.loginId = loginId;
+        this.password = password;
+        this.role = "member";
     }
 }
