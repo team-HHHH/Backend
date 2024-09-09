@@ -49,8 +49,10 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/user/login/**").permitAll()
-                        .requestMatchers("/user/logout").permitAll()
+                        .requestMatchers("/users/login/**").permitAll()
+                        .requestMatchers("/users/logout").permitAll()
+                        .requestMatchers("/users/check/**").permitAll()
+                        .requestMatchers("/users/register").permitAll()
                         .anyRequest().authenticated());
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
