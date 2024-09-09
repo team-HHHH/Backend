@@ -3,6 +3,7 @@ package com.hhhh.dodream.domain.user.service;
 import com.hhhh.dodream.domain.user.dto.request.EmailAuthRequestDto;
 import com.hhhh.dodream.domain.user.dto.request.UserRegisterDetailRequestDto;
 import com.hhhh.dodream.domain.user.dto.request.UserRegisterRequestDto;
+import com.hhhh.dodream.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.hhhh.dodream.domain.user.dto.request.UserUpdateRequestDto;
 import com.hhhh.dodream.domain.user.dto.response.UserDuplicatedResponseDto;
 import com.hhhh.dodream.domain.user.dto.response.UserEmailCodeCheckResponseDto;
@@ -75,18 +76,32 @@ public class UserService {
     }
 
     public UserInquiryResponseDto find(Long userId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("db에 없는 데이터입니다."));
+        UserEntity user = this.findUser(userId);
         return user.toInquiryDto();
     }
 
     @Transactional
     public void update(UserUpdateRequestDto updateRequestDto, Long userId) {
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("db에 없는 데이터입니다."));
-        String EncodedPassword = passwordEncoder.encode(updateRequestDto.getPassword());
-        updateRequestDto.setPassword(EncodedPassword);
+        UserEntity user = this.findUser(userId);
         user.updateEntity(updateRequestDto);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void updatePassword(Long userId, UserPasswordUpdateRequestDto updateRequestDto){
+        UserEntity user = this.findUser(userId);
+        String encodedOriginPw = passwordEncoder.encode(updateRequestDto.getOriginpw());
+        if(encodedOriginPw.equals(user.getPassword())){
+            String encodedNewPw = passwordEncoder.encode(updateRequestDto.getNewpw());
+            user.setPassword(encodedNewPw);
+            userRepository.save(user);
+        }else{
+            throw new RuntimeException("기존 비밀번호 불일치");
+        }
+    }
+
+    private UserEntity findUser(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(()->new RuntimeException("db에 없는 데이터입니다."));
     }
 }

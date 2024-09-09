@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Optional;
@@ -62,6 +63,7 @@ public class AuthService {
         throw new RuntimeException("로그인에 실패했습니다.");
     }
 
+    @Transactional
     public UserLoginResponseDto oauthLogin(HttpServletResponse response,
                                            UserLoginRequestDto loginRequestDto) {
         String loginId = loginRequestDto.getLoginId();
