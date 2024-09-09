@@ -90,7 +90,7 @@ public class AuthService {
         response.setHeader("Refresh", null);
     }
 
-    private void setJWTHeaders(UserEntity user, HttpServletResponse response) {
+    public void setJWTHeaders(UserEntity user, HttpServletResponse response) {
         Long userId = user.getId();
         String role = user.getRole();
         this.setJWTHeaders(userId, role, response);
