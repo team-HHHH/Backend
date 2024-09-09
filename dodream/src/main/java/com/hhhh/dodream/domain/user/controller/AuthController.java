@@ -32,7 +32,7 @@ public class AuthController {
         return BodyResponseDto.generalSuccess("로그인 성공", body);
     }
 
-    @PostMapping("/login/custom")
+    @PostMapping("/login/oauth")
     public ResponseDto oauthLogin(HttpServletResponse response,
                                   UserLoginRequestDto loginRequestDto) {
         UserLoginResponseDto body = authService.oauthLogin(response, loginRequestDto);
