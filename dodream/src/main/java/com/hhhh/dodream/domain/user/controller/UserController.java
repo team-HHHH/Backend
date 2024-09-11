@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
-    private final AuthService authService;
 
     @PostMapping("/check/id")
     public ResponseDto checkIdDuplication(@RequestBody LoginIdDuplicatedCheckRequestDto requestDto){

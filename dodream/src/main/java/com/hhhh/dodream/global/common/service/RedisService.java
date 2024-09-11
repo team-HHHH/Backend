@@ -12,6 +12,12 @@ import java.util.concurrent.TimeUnit;
 public class RedisService {
     private final StringRedisTemplate redisTemplate;
 
+    public void setKey(RedisKeyPrefixEnum keyPrefix,
+                       Long id, String refreshToken) {
+        redisTemplate.opsForValue()
+                .set(keyPrefix.getDescription() + id, refreshToken);
+    }
+
     public void deleteKey(RedisKeyPrefixEnum keyPrefix, Long id) {
         redisTemplate.delete(keyPrefix.getDescription() + id);
     }

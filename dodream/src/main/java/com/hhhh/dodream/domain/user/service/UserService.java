@@ -19,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -31,51 +29,54 @@ public class UserService {
     private final UserRedisService userRedisService;
     private final AuthService authService;
 
-    public void sendAuthCode(String email){
+    public void sendAuthCode(String email) {
         if (checkEmailDuplication(email).isDuplicated()) throw new RuntimeException("이미 가입된 이메일입니다.");
         int authCode = mailService.sendAuthCodeOnMail(email);
-        userRedisService.saveAuthCode(email,authCode);
+        userRedisService.saveAuthCode(email, authCode);
     }
 
-    public UserEmailCodeCheckResponseDto checkAuthCode(EmailAuthRequestDto authRequestDto){
+    public UserEmailCodeCheckResponseDto checkAuthCode(EmailAuthRequestDto authRequestDto) {
         boolean hasBeenChecked = userRedisService.checkAuthCode(authRequestDto.getEmail(), authRequestDto.getEmailCode());
         if (hasBeenChecked) return new UserEmailCodeCheckResponseDto(true);
         return new UserEmailCodeCheckResponseDto(false);
     }
 
     @Transactional(readOnly = true)
-    public UserDuplicatedResponseDto checkEmailDuplication(String email){
+    public UserDuplicatedResponseDto checkEmailDuplication(String email) {
         boolean duplicated = userRepository.existsByEmail(email);
         return new UserDuplicatedResponseDto(duplicated);
     }
 
     @Transactional(readOnly = true)
-    public UserDuplicatedResponseDto checkLoginIdDuplication(String loginId){
+    public UserDuplicatedResponseDto checkLoginIdDuplication(String loginId) {
         boolean duplicated = userRepository.existsByLoginId(loginId);
         return new UserDuplicatedResponseDto(duplicated);
     }
 
     @Transactional(readOnly = true)
-    public UserDuplicatedResponseDto checkNicknameDuplication(String nickname){
+    public UserDuplicatedResponseDto checkNicknameDuplication(String nickname) {
         boolean duplicated = userRepository.existsByNickname(nickname);
         return new UserDuplicatedResponseDto(duplicated);
     }
 
     @Transactional
-    public void register(UserRegisterRequestDto userRegisterRequestDto, HttpServletResponse response){
-        if (checkLoginIdDuplication(userRegisterRequestDto.getLoginId()).isDuplicated()) throw new RuntimeException("중복된 아이디입니다.");
-        if (!userRedisService.isEmailChecked(userRegisterRequestDto.getEmail())) throw new RuntimeException("이메일 인증이 되지 않았습니다");
+    public void register(UserRegisterRequestDto userRegisterRequestDto, HttpServletResponse response) {
+        if (checkLoginIdDuplication(userRegisterRequestDto.getLoginId()).isDuplicated())
+            throw new RuntimeException("중복된 아이디입니다.");
+        if (!userRedisService.isEmailChecked(userRegisterRequestDto.getEmail()))
+            throw new RuntimeException("이메일 인증이 되지 않았습니다");
         String encodedPassword = passwordEncoder.encode(userRegisterRequestDto.getPassword());
         UserEntity user = userRepository.save(new UserEntity(userRegisterRequestDto.getEmail(), userRegisterRequestDto.getLoginId(), encodedPassword));
-        authService.setJWTHeaders(user,response);
+        authService.setJWT(user, response);
     }
 
     @Transactional
-    public void registerDetail(UserRegisterDetailRequestDto detailRequestDto, Long userId){
+    public void registerDetail(UserRegisterDetailRequestDto detailRequestDto, Long userId) {
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("db에 없는 데이터입니다."));
-        if (checkNicknameDuplication(detailRequestDto.getNickName()).isDuplicated()) throw new RuntimeException("중복된 닉네임입니다.");
+        if (checkNicknameDuplication(detailRequestDto.getNickName()).isDuplicated())
+            throw new RuntimeException("중복된 닉네임입니다.");
         String imagePath = s3UploadService.uploadImageToS3(detailRequestDto.getProfileImage());
-        user.registerDetail(detailRequestDto,imagePath);
+        user.registerDetail(detailRequestDto, imagePath);
     }
 
     public UserInquiryResponseDto find(Long userId) {
@@ -91,27 +92,26 @@ public class UserService {
     }
 
     @Transactional
-    public void updatePassword(Long userId, UserPasswordUpdateRequestDto updateRequestDto){
+    public void updatePassword(Long userId, UserPasswordUpdateRequestDto updateRequestDto) {
         UserEntity user = this.findUser(userId);
-        String encodedOriginPw = passwordEncoder.encode(updateRequestDto.getOriginPw());
-        if(encodedOriginPw.equals(user.getPassword())){
+        if (passwordEncoder.matches(updateRequestDto.getOriginPw(), user.getPassword())) {
             String encodedNewPw = passwordEncoder.encode(updateRequestDto.getNewPw());
             user.setPassword(encodedNewPw);
             userRepository.save(user);
-        }else{
+        } else {
             throw new RuntimeException("기존 비밀번호 불일치");
         }
     }
 
     public void checkNickname(Long userId) {
         UserEntity user = findUser(userId);
-        if(ObjectUtils.isEmpty(user.getNickname())){
+        if (ObjectUtils.isEmpty(user.getNickname())) {
             throw new RuntimeException("닉네임 부재");
         }
     }
 
-    private UserEntity findUser(Long userId){
+    private UserEntity findUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(()->new RuntimeException("db에 없는 데이터입니다."));
+                .orElseThrow(() -> new RuntimeException("db에 없는 데이터입니다."));
     }
 }

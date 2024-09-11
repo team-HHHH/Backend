@@ -48,7 +48,7 @@ public class AuthService {
         Long userId = jwtUtil.getUserId(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
 
-        this.setJWTHeaders(userId, role, response);
+        this.setJWT(userId, role, response);
     }
 
     public UserLoginResponseDto customLogin(HttpServletResponse response,
@@ -56,8 +56,7 @@ public class AuthService {
         String loginId = loginRequestDto.getLoginId();
         UserEntity user = userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new RuntimeException("db에 없는 데이터입니다."));
-        String EncodedPassword = passwordEncoder.encode(loginRequestDto.getPassword());
-        if (user.getPassword().equals(EncodedPassword)) {
+        if (passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
             return this.checkFirstLogin(user, response);
         }
         throw new RuntimeException("로그인에 실패했습니다.");
@@ -77,43 +76,48 @@ public class AuthService {
                     .role("ROLE_USER")
                     .build();
             userRepository.save(user);
-            return UserLoginResponseDto.from(true);
         } else {
             user = optionalUser.get();
-            return this.checkFirstLogin(user, response);
         }
+        return this.checkFirstLogin(user, response);
     }
 
     public void logout(HttpServletResponse response, String refreshToken) {
-        Long userId = jwtUtil.getUserId(refreshToken);
-        redisService.deleteKey(RedisKeyPrefixEnum.REFRESH, userId);
         SecurityContextHolder.clearContext();
         response.setHeader("Authorization", null);
         response.setHeader("Refresh", null);
+        Long userId;
+        try {
+            userId = jwtUtil.getUserId(refreshToken);
+        } catch (ExpiredJwtException e) {
+            return;
+        }
+        redisService.deleteKey(RedisKeyPrefixEnum.REFRESH, userId);
     }
 
-    public void setJWTHeaders(UserEntity user, HttpServletResponse response) {
+    public void setJWT(UserEntity user, HttpServletResponse response) {
         Long userId = user.getId();
         String role = user.getRole();
-        this.setJWTHeaders(userId, role, response);
+        this.setJWT(userId, role, response);
     }
 
-    private void setJWTHeaders(Long userId, String role,
-                               HttpServletResponse response) {
+    private void setJWT(Long userId, String role,
+                        HttpServletResponse response) {
         String newAccessToken = jwtUtil.createToken(
                 "access", userId, role, ACCESS_TOKEN_EXPIRED_TTL);
         String newRefreshToken = jwtUtil.createToken(
                 "refresh", userId, role, REFRESH_TOKEN_EXPIRED_TTL);
         response.setHeader("Authorization", "Bearer " + newAccessToken);
         response.setHeader("Refresh", newRefreshToken);
+        redisService.setKey(RedisKeyPrefixEnum.REFRESH, userId, newRefreshToken);
     }
 
     private UserLoginResponseDto checkFirstLogin(UserEntity user,
                                                  HttpServletResponse response) {
+        this.setJWT(user, response);
         if (ObjectUtils.isEmpty(user.getNickname())) {
             return UserLoginResponseDto.from(true);
         } else {
-            this.setJWTHeaders(user, response);
             return UserLoginResponseDto.from(false);
         }
     }
