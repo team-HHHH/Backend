@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class UserLoginResponseDto {
-    private boolean isFirstLogin;
+    private boolean firstLogin;
 
-    public static UserLoginResponseDto from(boolean isFirstLogin){
-        return new UserLoginResponseDto(isFirstLogin);
+    public static UserLoginResponseDto from(boolean firstLogin){
+        return new UserLoginResponseDto(firstLogin);
     }
 }

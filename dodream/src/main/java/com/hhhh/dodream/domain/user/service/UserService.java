@@ -17,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -90,9 +93,9 @@ public class UserService {
     @Transactional
     public void updatePassword(Long userId, UserPasswordUpdateRequestDto updateRequestDto){
         UserEntity user = this.findUser(userId);
-        String encodedOriginPw = passwordEncoder.encode(updateRequestDto.getOriginpw());
+        String encodedOriginPw = passwordEncoder.encode(updateRequestDto.getOriginPw());
         if(encodedOriginPw.equals(user.getPassword())){
-            String encodedNewPw = passwordEncoder.encode(updateRequestDto.getNewpw());
+            String encodedNewPw = passwordEncoder.encode(updateRequestDto.getNewPw());
             user.setPassword(encodedNewPw);
             userRepository.save(user);
         }else{

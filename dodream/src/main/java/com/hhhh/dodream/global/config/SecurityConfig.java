@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/users/login/**").permitAll()
                         .requestMatchers("/users/logout").permitAll()
-                        .requestMatchers("/users/check/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/users/check/**").permitAll()
                         .requestMatchers("/users/register").permitAll()
                         .anyRequest().authenticated());
         http
