@@ -103,6 +103,13 @@ public class UserService {
         }
     }
 
+    public void checkNickname(Long userId) {
+        UserEntity user = findUser(userId);
+        if(ObjectUtils.isEmpty(user.getNickname())){
+            throw new RuntimeException("닉네임 부재");
+        }
+    }
+
     private UserEntity findUser(Long userId){
         return userRepository.findById(userId)
                 .orElseThrow(()->new RuntimeException("db에 없는 데이터입니다."));

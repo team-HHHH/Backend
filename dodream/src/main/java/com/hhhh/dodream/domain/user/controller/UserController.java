@@ -79,4 +79,10 @@ public class UserController {
         userService.updatePassword(userDetails.getUserId(), updateRequestDto);
         return ResponseDto.generalSuccess("비밀번호 수정 성공");
     }
+
+    @GetMapping("/check/nickname")
+    public ResponseDto checkNickname(@AuthenticationPrincipal CustomUserDetails userDetails){
+        userService.checkNickname(userDetails.getUserId());
+        return ResponseDto.generalSuccess("닉네임 존재");
+    }
 }
