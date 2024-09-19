@@ -2,6 +2,7 @@ package com.hhhh.dodream.global.config;
 
 
 import com.hhhh.dodream.global.common.service.RedisService;
+import com.hhhh.dodream.global.security.ExceptionHandlingFilter;
 import com.hhhh.dodream.global.security.JWTFilter;
 import com.hhhh.dodream.global.security.JWTUtil;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +56,8 @@ public class SecurityConfig {
                         .requestMatchers("/users/register").permitAll()
                         .anyRequest().authenticated());
         http
-                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new ExceptionHandlingFilter(), JWTFilter.class);
         return http.build();
     }
 }
