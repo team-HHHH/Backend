@@ -1,5 +1,6 @@
-package com.hhhh.dodream.global.exception.kind;
+package com.hhhh.dodream.global.exception.kind.agreed_exception;
 
+import com.hhhh.dodream.global.exception.kind.CustomException;
 import lombok.Getter;
 
 @Getter

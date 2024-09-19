@@ -1,7 +1,7 @@
 package com.hhhh.dodream.global.security;
 
-import com.hhhh.dodream.global.exception.kind.ExpiredTokenException;
-import com.hhhh.dodream.global.exception.kind.InvalidTokenException;
+import com.hhhh.dodream.global.exception.kind.error_exception.ExpiredTokenException;
+import com.hhhh.dodream.global.exception.kind.error_exception.InvalidTokenException;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
