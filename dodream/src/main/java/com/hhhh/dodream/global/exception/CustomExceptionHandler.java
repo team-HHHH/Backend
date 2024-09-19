@@ -1,8 +1,7 @@
 package com.hhhh.dodream.global.exception;
 
 import com.hhhh.dodream.global.common.dto.ResponseDto;
-import com.hhhh.dodream.global.exception.kind.CustomeException;
-import com.hhhh.dodream.global.exception.kind.DuplicatedException;
+import com.hhhh.dodream.global.exception.kind.CustomException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -14,8 +13,9 @@ import java.io.IOException;
 @RestControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(CustomeException.class)
-    public ResponseDto handleDuplicatedException(CustomeException e) {
+    @ExceptionHandler(CustomException.class)
+    public ResponseDto handleCustomException(CustomException e) {
+        log.warn("{} - {}", e.getCode(), e.getMessage());
         return ResponseDto.of(e.getCode(), e.getMessage());
     }
 

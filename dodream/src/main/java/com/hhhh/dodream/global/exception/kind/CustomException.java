@@ -3,10 +3,10 @@ package com.hhhh.dodream.global.exception.kind;
 import lombok.Getter;
 
 @Getter
-public class CustomeException extends RuntimeException {
+public class CustomException extends RuntimeException {
     private final int code;
 
-    public CustomeException(int code, String message) {
+    public CustomException(int code, String message) {
         super(message);
         this.code = code;
     }
