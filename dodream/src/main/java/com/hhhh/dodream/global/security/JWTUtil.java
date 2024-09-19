@@ -1,27 +1,21 @@
 package com.hhhh.dodream.global.security;
 
-import com.hhhh.dodream.global.common.service.RedisService;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Component
 public class JWTUtil {
     private final SecretKey secretKey;
-    private final RedisService redisService;
 
-    public JWTUtil(@Value("${spring.jwt.secret}") String secret, RedisService redisService) {
+    public JWTUtil(@Value("${spring.jwt.secret}") String secret) {
         this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
                 Jwts.SIG.HS256.key().build().getAlgorithm());
-        this.redisService = redisService;
     }
 
     public Long getUserId(String token) {
