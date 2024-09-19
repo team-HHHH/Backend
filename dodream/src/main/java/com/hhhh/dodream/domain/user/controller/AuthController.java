@@ -19,27 +19,27 @@ public class AuthController {
     public ResponseDto reissueTokens(HttpServletResponse response,
                                      @RequestHeader("Refresh") String refreshToken) {
         authService.reissue(response, refreshToken);
-        return ResponseDto.generalSuccess("새 jwt 토큰 발급 성공");
+        return ResponseDto.onSuccess("새 jwt 토큰 발급 성공");
     }
 
     @PostMapping("/login/custom")
     public ResponseDto customLogin(HttpServletResponse response,
                                    @RequestBody UserLoginRequestDto loginRequestDto) {
         UserLoginResponseDto body = authService.customLogin(response, loginRequestDto);
-        return BodyResponseDto.generalSuccess("로그인 성공", body);
+        return BodyResponseDto.onSuccess("로그인 성공", body);
     }
 
     @PostMapping("/login/oauth")
     public ResponseDto oauthLogin(HttpServletResponse response,
                                   @RequestBody UserLoginRequestDto loginRequestDto) {
         UserLoginResponseDto body = authService.oauthLogin(response, loginRequestDto);
-        return BodyResponseDto.generalSuccess("로그인 성공", body);
+        return BodyResponseDto.onSuccess("로그인 성공", body);
     }
 
     @PostMapping("/logout")
     public ResponseDto logout(HttpServletResponse response,
                               @RequestHeader("Refresh") String refreshToken) {
         authService.logout(response, refreshToken);
-        return ResponseDto.generalSuccess("로그아웃 성공");
+        return ResponseDto.onSuccess("로그아웃 성공");
     }
 }

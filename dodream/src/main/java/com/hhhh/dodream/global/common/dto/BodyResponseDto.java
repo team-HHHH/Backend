@@ -11,13 +11,8 @@ public class BodyResponseDto<T> extends ResponseDto {
         this.body = body;
     }
 
-    public static <T> BodyResponseDto<T> of(int code, String message, T body) {
-        ResultDto result = new ResultDto(code, message);
-        return new BodyResponseDto<>(result, body);
-    }
-
-    public static <T> BodyResponseDto<T> generalSuccess(String message, T body) {
-        ResultDto result = new ResultDto(200, message);
-        return new BodyResponseDto<>(result, body);
+    public static <T> BodyResponseDto<T> onSuccess(String message, T body) {
+        ResultDto success = ResultDto.success(message);
+        return new BodyResponseDto<>(success, body);
     }
 }

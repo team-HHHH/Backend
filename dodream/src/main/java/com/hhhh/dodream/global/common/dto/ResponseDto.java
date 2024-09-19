@@ -1,6 +1,5 @@
 package com.hhhh.dodream.global.common.dto;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -14,13 +13,8 @@ public class ResponseDto {
         return new ResponseDto(result);
     }
 
-    public static ResponseDto generalSuccess(String message) {
-        ResultDto result = new ResultDto(200, message);
-        return new ResponseDto(result);
-    }
-
-    public static ResponseDto generalFailed(String message) {
-        ResultDto result = new ResultDto(400, message);
-        return new ResponseDto(result);
+    public static ResponseDto onSuccess(String message) {
+        ResultDto success = ResultDto.success(message);
+        return new ResponseDto(success);
     }
 }
