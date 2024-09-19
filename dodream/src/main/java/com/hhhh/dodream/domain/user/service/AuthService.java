@@ -6,6 +6,10 @@ import com.hhhh.dodream.domain.user.entity.UserEntity;
 import com.hhhh.dodream.domain.user.repository.UserRepository;
 import com.hhhh.dodream.global.common.enums.RedisKeyPrefixEnum;
 import com.hhhh.dodream.global.common.service.RedisService;
+import com.hhhh.dodream.global.exception.kind.DataFoundException;
+import com.hhhh.dodream.global.exception.kind.ExpiredTokenException;
+import com.hhhh.dodream.global.exception.kind.InvalidTokenException;
+import com.hhhh.dodream.global.exception.kind.VerificationException;
 import com.hhhh.dodream.global.security.JWTUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,18 +35,18 @@ public class AuthService {
 
     public void reissue(HttpServletResponse response, String refreshToken) {
         if (ObjectUtils.isEmpty(refreshToken)) {
-            throw new RuntimeException("Refresh token null");
+            throw new InvalidTokenException("리프레쉬 토큰이 없음");
         }
 
         try {
             jwtUtil.isExpired(refreshToken);
         } catch (ExpiredJwtException e) {
-            throw new RuntimeException("Refresh token expired");
+            throw new ExpiredTokenException("리프레쉬 토큰 만료됨");
         }
 
         String category = jwtUtil.getCategory(refreshToken);
         if (!category.equals("refresh")) {
-            throw new RuntimeException("Invalid token");
+            throw new InvalidTokenException("리프레쉬 토큰 카테고리 값이 유효하지 않음");
         }
 
         Long userId = jwtUtil.getUserId(refreshToken);
@@ -55,11 +59,11 @@ public class AuthService {
                                             UserLoginRequestDto loginRequestDto) {
         String loginId = loginRequestDto.getLoginId();
         UserEntity user = userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new RuntimeException("db에 없는 데이터입니다."));
+                .orElseThrow(() -> new DataFoundException("user db에 없는 데이터입니다."));
         if (passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
             return this.checkFirstLogin(user, response);
         }
-        throw new RuntimeException("로그인에 실패했습니다.");
+        throw new VerificationException("로그인에 실패했습니다.");
     }
 
     @Transactional

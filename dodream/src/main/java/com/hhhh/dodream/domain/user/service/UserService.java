@@ -12,6 +12,10 @@ import com.hhhh.dodream.domain.user.entity.UserEntity;
 import com.hhhh.dodream.domain.user.repository.UserRepository;
 import com.hhhh.dodream.global.cloud.service.S3UploadService;
 import com.hhhh.dodream.global.common.service.MailService;
+import com.hhhh.dodream.global.exception.kind.DataFoundException;
+import com.hhhh.dodream.global.exception.kind.DuplicatedException;
+import com.hhhh.dodream.global.exception.kind.MissingDataException;
+import com.hhhh.dodream.global.exception.kind.VerificationException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,7 +34,7 @@ public class UserService {
     private final AuthService authService;
 
     public void sendAuthCode(String email) {
-        if (checkEmailDuplication(email).isDuplicated()) throw new RuntimeException("이미 가입된 이메일입니다.");
+        if (checkEmailDuplication(email).isDuplicated()) throw new DuplicatedException("이미 가입된 이메일입니다.");
         int authCode = mailService.sendAuthCodeOnMail(email);
         userRedisService.saveAuthCode(email, authCode);
     }
@@ -62,9 +66,9 @@ public class UserService {
     @Transactional
     public void register(UserRegisterRequestDto userRegisterRequestDto, HttpServletResponse response) {
         if (checkLoginIdDuplication(userRegisterRequestDto.getLoginId()).isDuplicated())
-            throw new RuntimeException("중복된 아이디입니다.");
+            throw new DuplicatedException("중복된 아이디입니다.");
         if (!userRedisService.isEmailChecked(userRegisterRequestDto.getEmail()))
-            throw new RuntimeException("이메일 인증이 되지 않았습니다");
+            throw new VerificationException("이메일 인증이 되지 않았습니다");
         String encodedPassword = passwordEncoder.encode(userRegisterRequestDto.getPassword());
         UserEntity user = userRepository.save(new UserEntity(userRegisterRequestDto.getEmail(), userRegisterRequestDto.getLoginId(), encodedPassword));
         authService.setJWT(user, response);
@@ -72,9 +76,9 @@ public class UserService {
 
     @Transactional
     public void registerDetail(UserRegisterDetailRequestDto detailRequestDto, Long userId) {
-        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("db에 없는 데이터입니다."));
+        UserEntity user = this.findUser(userId);
         if (checkNicknameDuplication(detailRequestDto.getNickName()).isDuplicated())
-            throw new RuntimeException("중복된 닉네임입니다.");
+            throw new DuplicatedException("중복된 닉네임입니다.");
         String imagePath = s3UploadService.uploadImageToS3(detailRequestDto.getProfileImage());
         user.registerDetail(detailRequestDto, imagePath);
     }
@@ -99,19 +103,19 @@ public class UserService {
             user.setPassword(encodedNewPw);
             userRepository.save(user);
         } else {
-            throw new RuntimeException("기존 비밀번호 불일치");
+            throw new VerificationException("기존 비밀번호 불일치");
         }
     }
 
     public void checkNickname(Long userId) {
         UserEntity user = findUser(userId);
         if (ObjectUtils.isEmpty(user.getNickname())) {
-            throw new RuntimeException("닉네임 부재");
+            throw new MissingDataException("닉네임 부재");
         }
     }
 
-    private UserEntity findUser(Long userId) {
+    public UserEntity findUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("db에 없는 데이터입니다."));
+                .orElseThrow(() -> new DataFoundException("user db에 없는 데이터입니다."));
     }
 }

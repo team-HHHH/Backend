@@ -1,5 +1,7 @@
 package com.hhhh.dodream.global.security;
 
+import com.hhhh.dodream.global.exception.kind.ExpiredTokenException;
+import com.hhhh.dodream.global.exception.kind.InvalidTokenException;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -39,14 +41,14 @@ public class JWTFilter extends OncePerRequestFilter {
             if (path.equals("/users/reissue") && method.equals("POST")) {
                 filterChain.doFilter(request, response);
             } else {
-                throw new RuntimeException("Access token expired");
+                throw new ExpiredTokenException("액세스 토큰 만료됨");
             }
             return;
         }
 
         String category = jwtUtil.getCategory(accessToken);
         if (!category.equals("access")) {
-            throw new RuntimeException("Invalid Token");
+            throw new InvalidTokenException("액세스 토큰 카테고리 값이 유효하지 않음");
         }
 
         Long userId = jwtUtil.getUserId(accessToken);
