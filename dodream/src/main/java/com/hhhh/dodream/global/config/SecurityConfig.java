@@ -2,6 +2,7 @@ package com.hhhh.dodream.global.config;
 
 
 import com.hhhh.dodream.global.common.service.RedisService;
+import com.hhhh.dodream.global.security.CustomAuthenticationEntryPoint;
 import com.hhhh.dodream.global.security.ExceptionHandlingFilter;
 import com.hhhh.dodream.global.security.JWTFilter;
 import com.hhhh.dodream.global.security.JWTUtil;
@@ -48,6 +49,9 @@ public class SecurityConfig {
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http
+                .exceptionHandling(e->e
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
         http
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers("/users/login/**").permitAll()
