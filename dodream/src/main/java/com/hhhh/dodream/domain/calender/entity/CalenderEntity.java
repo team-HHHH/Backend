@@ -3,6 +3,7 @@ package com.hhhh.dodream.domain.calender.entity;
 import com.hhhh.dodream.domain.calender.dto.CalenderRequestDto;
 import com.hhhh.dodream.domain.calender.dto.CalenderResponseDto;
 import com.hhhh.dodream.domain.user.entity.UserEntity;
+import com.hhhh.dodream.global.common.utils.LambdaUtils;
 import io.jsonwebtoken.lang.Objects;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+
+import static com.hhhh.dodream.global.common.utils.LambdaUtils.updateLambda;
 
 @Entity
 @Getter
@@ -59,19 +62,12 @@ public class CalenderEntity {
     }
 
     public void updateEntity(CalenderRequestDto calenderRequest) {
-        Integer year = calenderRequest.getYear();
-        Integer month = calenderRequest.getMonth();
-        Integer day = calenderRequest.getDay();
-        String title = calenderRequest.getTitle();
-        String content = calenderRequest.getContent();
-        LocalDateTime startDay = calenderRequest.getStartDay();
-        LocalDateTime endDay = calenderRequest.getEndDay();
-        if (!Objects.isEmpty(year)) this.year = year;
-        if (!Objects.isEmpty(month)) this.month = month;
-        if (!Objects.isEmpty(day)) this.day = day;
-        if (!Objects.isEmpty(title)) this.title = title;
-        if (!Objects.isEmpty(content)) this.content = content;
-        if (!Objects.isEmpty(startDay)) this.startDay = startDay;
-        if (!Objects.isEmpty(endDay)) this.endDay = endDay;
+        updateLambda(calenderRequest.getYear(), year -> this.year = year);
+        updateLambda(calenderRequest.getMonth(), month -> this.month = month);
+        updateLambda(calenderRequest.getDay(), day -> this.day = day);
+        updateLambda(calenderRequest.getTitle(), title -> this.title = title);
+        updateLambda(calenderRequest.getContent(), content -> this.content = content);
+        updateLambda(calenderRequest.getStartDay(), startDay -> this.startDay = startDay);
+        updateLambda(calenderRequest.getEndDay(), endDay -> this.endDay = endDay);
     }
 }
