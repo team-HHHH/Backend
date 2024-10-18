@@ -6,6 +6,7 @@ import com.hhhh.dodream.global.security.CustomAuthenticationEntryPoint;
 import com.hhhh.dodream.global.security.ExceptionHandlingFilter;
 import com.hhhh.dodream.global.security.JWTFilter;
 import com.hhhh.dodream.global.security.JWTUtil;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +18,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-
-import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -50,7 +49,7 @@ public class SecurityConfig {
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http
-                .exceptionHandling(e->e
+                .exceptionHandling(e -> e
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint()));
         http
                 .authorizeHttpRequests((auth) -> auth
@@ -58,6 +57,7 @@ public class SecurityConfig {
                         .requestMatchers("/users/logout").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/check/**").permitAll()
                         .requestMatchers("/users/register").permitAll()
+                        .requestMatchers("/posters/location/**").permitAll()
                         .anyRequest().authenticated());
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
