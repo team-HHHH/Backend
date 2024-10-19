@@ -2,6 +2,7 @@ package com.hhhh.dodream.domain.poster.controller;
 
 import com.hhhh.dodream.domain.poster.dto.request.PosterLocationRequest;
 import com.hhhh.dodream.domain.poster.dto.request.PosterRegisterRequest;
+import com.hhhh.dodream.domain.poster.dto.request.PosterUploadRequest;
 import com.hhhh.dodream.domain.poster.dto.response.PosterInfoResponse;
 import com.hhhh.dodream.domain.poster.service.PosterInfoService;
 import com.hhhh.dodream.global.common.dto.BodyResponseDto;
@@ -22,6 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/posters")
 public class PosterInfoController {
     private final PosterInfoService posterInfoService;
+
+    @PostMapping("/upload")
+    public ResponseDto uploadPoster(@ModelAttribute PosterUploadRequest request) {
+        PosterInfoResponse posterInfoResponse = posterInfoService.uploadAndProcessImage(request);
+        return BodyResponseDto.onSuccess("포스터 업로드 성공", posterInfoResponse);
+    }
+
 
     @GetMapping("/location/user")
     public ResponseDto getPostersByLocationByUpos(@ModelAttribute PosterLocationRequest request) {
