@@ -1,9 +1,9 @@
 package com.hhhh.dodream.domain.user.service;
 
 import com.hhhh.dodream.domain.user.dto.request.EmailAuthRequestDto;
+import com.hhhh.dodream.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.hhhh.dodream.domain.user.dto.request.UserRegisterDetailRequestDto;
 import com.hhhh.dodream.domain.user.dto.request.UserRegisterRequestDto;
-import com.hhhh.dodream.domain.user.dto.request.UserPasswordUpdateRequestDto;
 import com.hhhh.dodream.domain.user.dto.request.UserUpdateRequestDto;
 import com.hhhh.dodream.domain.user.dto.response.UserDuplicatedResponseDto;
 import com.hhhh.dodream.domain.user.dto.response.UserEmailCodeCheckResponseDto;
@@ -12,10 +12,10 @@ import com.hhhh.dodream.domain.user.entity.UserEntity;
 import com.hhhh.dodream.domain.user.repository.UserRepository;
 import com.hhhh.dodream.global.cloud.service.S3UploadService;
 import com.hhhh.dodream.global.common.service.MailService;
-import com.hhhh.dodream.global.exception.kind.error_exception.DataFoundException;
 import com.hhhh.dodream.global.exception.kind.agreed_exception.DuplicatedException;
 import com.hhhh.dodream.global.exception.kind.agreed_exception.MissingDataException;
 import com.hhhh.dodream.global.exception.kind.agreed_exception.VerificationException;
+import com.hhhh.dodream.global.exception.kind.error_exception.DataFoundException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,6 +26,7 @@ import org.springframework.util.ObjectUtils;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    private static final String USER_IMAGE_PREFIX = "user_image/";
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final S3UploadService s3UploadService;
@@ -34,14 +35,19 @@ public class UserService {
     private final AuthService authService;
 
     public void sendAuthCode(String email) {
-        if (checkEmailDuplication(email).isDuplicated()) throw new DuplicatedException("이미 가입된 이메일입니다.");
+        if (checkEmailDuplication(email).isDuplicated()) {
+            throw new DuplicatedException("이미 가입된 이메일입니다.");
+        }
         int authCode = mailService.sendAuthCodeOnMail(email);
         userRedisService.saveAuthCode(email, authCode);
     }
 
     public UserEmailCodeCheckResponseDto checkAuthCode(EmailAuthRequestDto authRequestDto) {
-        boolean hasBeenChecked = userRedisService.checkAuthCode(authRequestDto.getEmail(), authRequestDto.getEmailCode());
-        if (hasBeenChecked) return new UserEmailCodeCheckResponseDto(true);
+        boolean hasBeenChecked = userRedisService.checkAuthCode(authRequestDto.getEmail(),
+                authRequestDto.getEmailCode());
+        if (hasBeenChecked) {
+            return new UserEmailCodeCheckResponseDto(true);
+        }
         return new UserEmailCodeCheckResponseDto(false);
     }
 
@@ -65,21 +71,27 @@ public class UserService {
 
     @Transactional
     public void register(UserRegisterRequestDto userRegisterRequestDto, HttpServletResponse response) {
-        if (checkLoginIdDuplication(userRegisterRequestDto.getLoginId()).isDuplicated())
+        if (checkLoginIdDuplication(userRegisterRequestDto.getLoginId()).isDuplicated()) {
             throw new DuplicatedException("중복된 아이디입니다.");
-        if (!userRedisService.isEmailChecked(userRegisterRequestDto.getEmail()))
+        }
+        if (!userRedisService.isEmailChecked(userRegisterRequestDto.getEmail())) {
             throw new VerificationException("이메일 인증이 되지 않았습니다");
+        }
         String encodedPassword = passwordEncoder.encode(userRegisterRequestDto.getPassword());
-        UserEntity user = userRepository.save(new UserEntity(userRegisterRequestDto.getEmail(), userRegisterRequestDto.getLoginId(), encodedPassword));
+        UserEntity user = userRepository.save(
+                new UserEntity(userRegisterRequestDto.getEmail(), userRegisterRequestDto.getLoginId(),
+                        encodedPassword));
         authService.setJWT(user, response);
     }
 
     @Transactional
     public void registerDetail(UserRegisterDetailRequestDto detailRequestDto, Long userId) {
         UserEntity user = this.findUser(userId);
-        if (checkNicknameDuplication(detailRequestDto.getNickName()).isDuplicated())
+        if (checkNicknameDuplication(detailRequestDto.getNickName()).isDuplicated()) {
             throw new DuplicatedException("중복된 닉네임입니다.");
-        String imagePath = s3UploadService.uploadImageToS3(detailRequestDto.getProfileImage());
+        }
+        String imagePath = s3UploadService.uploadImageToS3(detailRequestDto.getProfileImage(),
+                USER_IMAGE_PREFIX + user.getId());
         user.registerDetail(detailRequestDto, imagePath);
     }
 
