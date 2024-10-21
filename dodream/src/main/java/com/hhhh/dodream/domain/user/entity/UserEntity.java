@@ -3,9 +3,12 @@ package com.hhhh.dodream.domain.user.entity;
 import com.hhhh.dodream.domain.user.dto.request.UserRegisterDetailRequestDto;
 import com.hhhh.dodream.domain.user.dto.request.UserUpdateRequestDto;
 import com.hhhh.dodream.domain.user.dto.response.UserInquiryResponseDto;
+import com.hhhh.dodream.global.common.utils.LambdaUtils;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.util.ObjectUtils;
+
+import static com.hhhh.dodream.global.common.utils.LambdaUtils.updateStringLambda;
 
 @Entity
 @Getter
@@ -52,14 +55,8 @@ public class UserEntity {
     }
 
     public void updateEntity(UserUpdateRequestDto updateRequestDto){
-        String nickname = updateRequestDto.getNickname();
-        String address = updateRequestDto.getAddress();
-        if(!ObjectUtils.isEmpty(nickname)){
-            this.nickname=nickname;
-        }
-        if(!ObjectUtils.isEmpty(address)){
-            this.address=address;
-        }
+        updateStringLambda(updateRequestDto.getNickname(), nickname -> this.nickname = nickname);
+        updateStringLambda(updateRequestDto.getAddress(), address -> this.address = address);
     }
 
     public void registerDetail(UserRegisterDetailRequestDto dto, String imagePath){
