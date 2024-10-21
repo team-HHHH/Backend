@@ -3,10 +3,8 @@ package com.hhhh.dodream.domain.user.entity;
 import com.hhhh.dodream.domain.user.dto.request.UserRegisterDetailRequestDto;
 import com.hhhh.dodream.domain.user.dto.request.UserUpdateRequestDto;
 import com.hhhh.dodream.domain.user.dto.response.UserInquiryResponseDto;
-import com.hhhh.dodream.global.common.utils.LambdaUtils;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.util.ObjectUtils;
 
 import static com.hhhh.dodream.global.common.utils.LambdaUtils.updateStringLambda;
 
@@ -57,6 +55,10 @@ public class UserEntity {
     public void updateEntity(UserUpdateRequestDto updateRequestDto){
         updateStringLambda(updateRequestDto.getNickname(), nickname -> this.nickname = nickname);
         updateStringLambda(updateRequestDto.getAddress(), address -> this.address = address);
+    }
+
+    public void updateEntity(String imagePath){
+        this.imagePath = imagePath;
     }
 
     public void registerDetail(UserRegisterDetailRequestDto dto, String imagePath){

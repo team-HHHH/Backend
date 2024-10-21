@@ -22,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -105,6 +106,17 @@ public class UserService {
         UserEntity user = this.findUser(userId);
         user.updateEntity(updateRequestDto);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void update(MultipartFile profileImage, Long userId) {
+        UserEntity user = this.findUser(userId);
+        String imagePath = s3UploadService.uploadImageToS3(profileImage,
+                USER_IMAGE_PREFIX + user.getId());
+        if(!imagePath.equals(user.getImagePath())) {
+            user.updateEntity(imagePath);
+            userRepository.save(user);
+        }
     }
 
     @Transactional
