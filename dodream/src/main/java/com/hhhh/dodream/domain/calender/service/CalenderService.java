@@ -1,7 +1,8 @@
 package com.hhhh.dodream.domain.calender.service;
 
-import com.hhhh.dodream.domain.calender.dto.CalenderRequestDto;
-import com.hhhh.dodream.domain.calender.dto.CalenderResponseDto;
+import com.hhhh.dodream.domain.calender.dto.request.CalenderCreateRequestDto;
+import com.hhhh.dodream.domain.calender.dto.request.CalenderUpdateRequestDto;
+import com.hhhh.dodream.domain.calender.dto.response.CalenderInquiryResponseDto;
 import com.hhhh.dodream.domain.calender.entity.CalenderEntity;
 import com.hhhh.dodream.domain.calender.repository.CalenderRepository;
 import com.hhhh.dodream.domain.user.entity.UserEntity;
@@ -19,19 +20,17 @@ public class CalenderService {
     private final CalenderRepository calenderRepository;
     private final UserService userService;
 
-    public List<CalenderResponseDto> get(Long userId, Integer year, Integer month) {
+    public List<CalenderInquiryResponseDto> get(Long userId, Integer year, Integer month) {
         return calenderRepository
-                .findByUserIdAndYearAndMonth(userId, year, month)
+                .findByUserIdAndDateInfoYearAndDateInfoMonth(userId, year, month)
                 .stream().map(CalenderEntity::toCalenderResponseDto).toList();
 
     }
 
-    public Long save(Long userId, CalenderRequestDto calenderRequest) {
+    public Long save(Long userId, CalenderCreateRequestDto calenderRequest) {
         UserEntity user = userService.findUser(userId);
         CalenderEntity calender = CalenderEntity.builder()
-                .year(calenderRequest.getYear())
-                .month(calenderRequest.getMonth())
-                .day(calenderRequest.getDay())
+                .dateInfo(calenderRequest.getDateInfo())
                 .title(calenderRequest.getTitle())
                 .content(calenderRequest.getContent())
                 .startDay(calenderRequest.getStartDay())
@@ -41,13 +40,13 @@ public class CalenderService {
         return calender.getId();
     }
 
-    public void update(Long userId, Long calenderId, CalenderRequestDto calenderRequest) {
+    public void update(Long userId, Long calenderId, CalenderUpdateRequestDto updateRequest) {
         CalenderEntity calender = calenderRepository.findByIdWithUser(calenderId)
                 .orElseThrow(() -> new DataFoundException("calender db에 없는 데이터입니다."));
         if (!userId.equals(calender.getUser().getId())) {
             throw new UnAuthorizedException("해당 일정을 수정할 권한이 없습니다.");
         }
-        calender.updateEntity(calenderRequest);
+        calender.updateEntity(updateRequest);
         calenderRepository.save(calender);
     }
 

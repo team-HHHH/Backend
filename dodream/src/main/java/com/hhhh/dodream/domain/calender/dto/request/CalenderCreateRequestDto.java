@@ -1,6 +1,6 @@
-package com.hhhh.dodream.domain.calender.dto;
+package com.hhhh.dodream.domain.calender.dto.request;
 
-import lombok.Builder;
+import com.hhhh.dodream.domain.calender.entity.embedded.DateInfo;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,12 +8,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
-public class CalenderResponseDto {
-    private Long calenderId;
-    private Integer year;
-    private Integer month;
-    private Integer day;
+public class CalenderCreateRequestDto {
+    private DateInfo dateInfo;
     private String title;
     private String content;
     private LocalDateTime startDay;

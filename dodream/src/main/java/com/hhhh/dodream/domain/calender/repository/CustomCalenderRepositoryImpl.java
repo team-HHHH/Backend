@@ -1,7 +1,6 @@
 package com.hhhh.dodream.domain.calender.repository;
 
 import com.hhhh.dodream.domain.calender.entity.CalenderEntity;
-import com.hhhh.dodream.domain.calender.entity.QCalenderEntity;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 

@@ -1,7 +1,8 @@
 package com.hhhh.dodream.domain.calender.controller;
 
-import com.hhhh.dodream.domain.calender.dto.CalenderRequestDto;
-import com.hhhh.dodream.domain.calender.dto.CalenderResponseDto;
+import com.hhhh.dodream.domain.calender.dto.request.CalenderCreateRequestDto;
+import com.hhhh.dodream.domain.calender.dto.request.CalenderUpdateRequestDto;
+import com.hhhh.dodream.domain.calender.dto.response.CalenderInquiryResponseDto;
 import com.hhhh.dodream.domain.calender.service.CalenderService;
 import com.hhhh.dodream.global.common.dto.BodyResponseDto;
 import com.hhhh.dodream.global.common.dto.ResponseDto;
@@ -22,23 +23,23 @@ public class CalenderController {
     public ResponseDto getCalender(@RequestParam("year") Integer year,
                                    @RequestParam("month") Integer month,
                                    @AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<CalenderResponseDto> calenderResponse = calenderService.get(
+        List<CalenderInquiryResponseDto> calenderResponse = calenderService.get(
                 userDetails.getUserId(), year, month);
         return BodyResponseDto.onSuccess("캘린더 조회 성공", calenderResponse);
     }
 
     @PostMapping
-    public ResponseDto saveCalender(@RequestBody CalenderRequestDto calenderRequest,
+    public ResponseDto saveCalender(@RequestBody CalenderCreateRequestDto createRequest,
                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Long calenderId = calenderService.save(userDetails.getUserId(), calenderRequest);
+        Long calenderId = calenderService.save(userDetails.getUserId(), createRequest);
         return BodyResponseDto.onSuccess("캘린더 저장 성공", calenderId);
     }
 
     @PatchMapping("/{calenderId}")
     public ResponseDto updateCalender(@PathVariable("calenderId") Long calenderId,
-                                      @RequestBody CalenderRequestDto calenderRequest,
+                                      @RequestBody CalenderUpdateRequestDto updateRequest,
                                       @AuthenticationPrincipal CustomUserDetails userDetails) {
-        calenderService.update(userDetails.getUserId(), calenderId, calenderRequest);
+        calenderService.update(userDetails.getUserId(), calenderId, updateRequest);
         return ResponseDto.onSuccess("캘린더 수정 성공");
     }
 

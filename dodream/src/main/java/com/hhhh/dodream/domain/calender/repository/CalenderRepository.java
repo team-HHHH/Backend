@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface CalenderRepository
         extends JpaRepository<CalenderEntity, Long>, CustomCalenderRepository {
-    List<CalenderEntity> findByUserIdAndYearAndMonth(Long userId, Integer year, Integer month);
+    List<CalenderEntity> findByUserIdAndDateInfoYearAndDateInfoMonth(
+            Long userId, Integer year, Integer month);
 }
