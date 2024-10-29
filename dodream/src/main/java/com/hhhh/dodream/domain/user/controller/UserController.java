@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -70,6 +71,13 @@ public class UserController {
         return ResponseDto.onSuccess("정보 수정 성공");
     }
 
+    @PatchMapping("/image")
+    public ResponseDto updateProfileImage(@RequestParam("profileImage") MultipartFile profileImage,
+                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
+        userService.update(profileImage, userDetails.getUserId());
+        return ResponseDto.onSuccess("이미지 수정 성공");
+    }
+
     @PatchMapping("/changepw")
     public ResponseDto updateUserPassword(@AuthenticationPrincipal CustomUserDetails userDetails,
                                           @RequestBody UserPasswordUpdateRequestDto updateRequestDto) {
@@ -78,7 +86,7 @@ public class UserController {
     }
 
     @GetMapping("/check/nickname")
-    public ResponseDto checkNickname(@AuthenticationPrincipal CustomUserDetails userDetails){
+    public ResponseDto checkNickname(@AuthenticationPrincipal CustomUserDetails userDetails) {
         userService.checkNickname(userDetails.getUserId());
         return ResponseDto.onSuccess("닉네임 존재");
     }
