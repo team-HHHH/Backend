@@ -27,6 +27,15 @@ public class PosterInfoResponse {
     private LocalDateTime startDay;
     private LocalDateTime endDay;
 
+    public PosterInfoResponse(String title, String participants, String summary, LocalDateTime endDate,
+                              LocalDateTime startDate) {
+        this.title = title;
+        this.participant = participants;
+        this.content = summary;
+        this.endDay = endDate;
+        this.startDay = startDate;
+    }
+
     public static PosterInfoResponse fromEntity(PosterInfo posterInfo) {
         return new PosterInfoResponse(
                 posterInfo.getId(),
