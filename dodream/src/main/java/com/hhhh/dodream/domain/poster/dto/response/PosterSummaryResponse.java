@@ -1,6 +1,6 @@
 package com.hhhh.dodream.domain.poster.dto.response;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ public class PosterSummaryResponse {
     private String title;
     private String participants;
     private String summary;
-    private LocalDateTime endDate;
-    private LocalDateTime startDate;
+    private LocalDate endDate;
+    private LocalDate startDate;
     private String image;
 }
