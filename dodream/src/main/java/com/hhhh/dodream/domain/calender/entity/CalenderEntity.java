@@ -2,7 +2,6 @@ package com.hhhh.dodream.domain.calender.entity;
 
 import com.hhhh.dodream.domain.calender.dto.request.CalenderCreateRequestDto;
 import com.hhhh.dodream.domain.calender.dto.request.CalenderUpdateRequestDto;
-import com.hhhh.dodream.domain.calender.dto.response.CalenderInquiryResponseDto;
 import com.hhhh.dodream.domain.calender.entity.embedded.DateInfo;
 import com.hhhh.dodream.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
@@ -43,16 +42,18 @@ public class CalenderEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    public CalenderInquiryResponseDto toCalenderResponseDto() {
-        return CalenderInquiryResponseDto.builder()
-                .calenderId(this.id)
-                .dateInfo(this.dateInfo)
-                .title(this.title).content(this.content)
-                .startDay(this.startDay).endDay(this.endDay)
+    public static CalenderEntity of(CalenderCreateRequestDto createRequestDto, UserEntity user) {
+        return CalenderEntity.builder()
+                .dateInfo(createRequestDto.getDateInfo())
+                .title(createRequestDto.getTitle())
+                .content(createRequestDto.getContent())
+                .startDay(createRequestDto.getStartDay())
+                .endDay(createRequestDto.getEndDay())
+                .user(user)
                 .build();
     }
 
-    public void updateEntity(CalenderUpdateRequestDto updateRequest) {
+    public void modify(CalenderUpdateRequestDto updateRequest) {
         updateLambda(updateRequest.getDateInfo(), dateInfo -> this.dateInfo = dateInfo);
         updateLambda(updateRequest.getTitle(), title -> this.title = title);
         updateLambda(updateRequest.getContent(), content -> this.content = content);
