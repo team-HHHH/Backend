@@ -4,12 +4,12 @@ import com.hhhh.dodream.domain.user.dto.request.UserLoginRequestDto;
 import com.hhhh.dodream.domain.user.dto.response.UserLoginResponseDto;
 import com.hhhh.dodream.domain.user.entity.UserEntity;
 import com.hhhh.dodream.domain.user.repository.UserRepository;
-import com.hhhh.dodream.global.common.enums.RedisKeyPrefixEnum;
+import com.hhhh.dodream.global.common.enums.KeyPrefixEnum;
 import com.hhhh.dodream.global.common.service.RedisService;
+import com.hhhh.dodream.global.exception.kind.agreed_exception.VerificationException;
 import com.hhhh.dodream.global.exception.kind.error_exception.DataFoundException;
 import com.hhhh.dodream.global.exception.kind.error_exception.ExpiredTokenException;
 import com.hhhh.dodream.global.exception.kind.error_exception.InvalidTokenException;
-import com.hhhh.dodream.global.exception.kind.agreed_exception.VerificationException;
 import com.hhhh.dodream.global.security.JWTUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,15 +26,58 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthService {
     private final JWTUtil jwtUtil;
+    private final RedisService redisService;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final RedisService redisService;
-
-    private final Long ACCESS_TOKEN_EXPIRED_TTL = 600000L;
-    private final Long REFRESH_TOKEN_EXPIRED_TTL = 86400000L;
 
     public void reissue(HttpServletResponse response, String refreshToken) {
-        if (ObjectUtils.isEmpty(refreshToken)) {
+        validateRefreshToken(refreshToken);
+
+        Long userId = jwtUtil.getUserId(refreshToken);
+
+        validateRefreshTokenWithRedis(refreshToken, userId);
+
+        String role = jwtUtil.getRole(refreshToken);
+
+        this.setJWT(userId, role, response);
+    }
+
+    public UserLoginResponseDto customLogin(HttpServletResponse response, UserLoginRequestDto loginRequestDto) {
+        UserEntity user = userRepository.findByLoginId(loginRequestDto.getLoginId())
+                .orElseThrow(() -> new DataFoundException("user db에 없는 데이터입니다."));
+
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
+            throw new VerificationException("로그인에 실패했습니다.");
+        }
+
+        this.setJWT(user.getId(), user.getRole(), response);
+
+        return this.checkFirstLogin(user);
+    }
+
+    @Transactional
+    public UserLoginResponseDto oauthLogin(HttpServletResponse response, UserLoginRequestDto loginRequestDto) {
+        UserEntity user = findOrCreateUser(loginRequestDto);
+
+        this.setJWT(user.getId(), user.getRole(), response);
+
+        return this.checkFirstLogin(user);
+    }
+
+    public void logout(HttpServletResponse response, String accessToken) {
+        SecurityContextHolder.clearContext();
+
+        clearResponseHeaders(response);
+
+        Long userId = jwtUtil.getUserId(accessToken);
+
+        redisService.setKeyWithExpiration(KeyPrefixEnum.LOGOUT_ACCESS.getKeyPrefix() + userId,
+                accessToken, jwtUtil.getExpirationInMillis(accessToken));
+        redisService.deleteKey(KeyPrefixEnum.REFRESH.getKeyPrefix() + userId);
+    }
+
+    private void validateRefreshToken(String refreshToken) {
+        if (refreshToken == null) {
             throw new InvalidTokenException("리프레쉬 토큰이 없음");
         }
 
@@ -48,81 +91,52 @@ public class AuthService {
         if (!category.equals("refresh")) {
             throw new InvalidTokenException("리프레쉬 토큰 카테고리 값이 유효하지 않음");
         }
-
-        Long userId = jwtUtil.getUserId(refreshToken);
-        String role = jwtUtil.getRole(refreshToken);
-
-        this.setJWT(userId, role, response);
     }
 
-    public UserLoginResponseDto customLogin(HttpServletResponse response,
-                                            UserLoginRequestDto loginRequestDto) {
-        String loginId = loginRequestDto.getLoginId();
-        UserEntity user = userRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new DataFoundException("user db에 없는 데이터입니다."));
-        if (passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            return this.checkFirstLogin(user, response);
+    private void validateRefreshTokenWithRedis(String refreshToken, Long userId) {
+        String refreshTokenInRedis = redisService.getValue(KeyPrefixEnum.REFRESH.getKeyPrefix() + userId);
+
+        if (!refreshTokenInRedis.equals(refreshToken)) {
+            throw new InvalidTokenException("유효하지 않은 리프레쉬 토큰임");
         }
-        throw new VerificationException("로그인에 실패했습니다.");
     }
 
-    @Transactional
-    public UserLoginResponseDto oauthLogin(HttpServletResponse response,
-                                           UserLoginRequestDto loginRequestDto) {
-        String loginId = loginRequestDto.getLoginId();
-        String EncodedPassword = passwordEncoder.encode(loginRequestDto.getPassword());
-        Optional<UserEntity> optionalUser = userRepository.findByLoginId(loginId);
-        UserEntity user;
-        if (optionalUser.isEmpty()) {
-            user = UserEntity.builder()
-                    .loginId(loginId)
-                    .password(EncodedPassword)
-                    .role("ROLE_USER")
-                    .build();
-            userRepository.save(user);
-        } else {
-            user = optionalUser.get();
-        }
-        return this.checkFirstLogin(user, response);
-    }
-
-    public void logout(HttpServletResponse response, String refreshToken) {
-        SecurityContextHolder.clearContext();
-        response.setHeader("Authorization", null);
-        response.setHeader("Refresh", null);
-        Long userId;
-        try {
-            userId = jwtUtil.getUserId(refreshToken);
-        } catch (ExpiredJwtException e) {
-            return;
-        }
-        redisService.deleteKey(RedisKeyPrefixEnum.REFRESH, userId);
-    }
-
-    public void setJWT(UserEntity user, HttpServletResponse response) {
-        Long userId = user.getId();
-        String role = user.getRole();
-        this.setJWT(userId, role, response);
-    }
-
-    private void setJWT(Long userId, String role,
-                        HttpServletResponse response) {
-        String newAccessToken = jwtUtil.createToken(
-                "access", userId, role, ACCESS_TOKEN_EXPIRED_TTL);
-        String newRefreshToken = jwtUtil.createToken(
-                "refresh", userId, role, REFRESH_TOKEN_EXPIRED_TTL);
-        response.setHeader("Authorization", "Bearer " + newAccessToken);
-        response.setHeader("Refresh", newRefreshToken);
-        redisService.setKey(RedisKeyPrefixEnum.REFRESH, userId, newRefreshToken);
-    }
-
-    private UserLoginResponseDto checkFirstLogin(UserEntity user,
-                                                 HttpServletResponse response) {
-        this.setJWT(user, response);
+    private UserLoginResponseDto checkFirstLogin(UserEntity user) {
         if (ObjectUtils.isEmpty(user.getNickname())) {
             return UserLoginResponseDto.from(true);
         } else {
             return UserLoginResponseDto.from(false);
         }
+    }
+
+    public void setJWT(Long userId, String role, HttpServletResponse response) {
+        long accessTokenTTL = 600000L;
+        String newAccessToken = jwtUtil.createToken("access", userId, role, accessTokenTTL);
+
+        long refreshTokenTTL = 86400000L;
+        String newRefreshToken = jwtUtil.createToken("refresh", userId, role, refreshTokenTTL);
+
+        redisService.setKeyWithExpiration(KeyPrefixEnum.REFRESH.getKeyPrefix() + userId, newRefreshToken, refreshTokenTTL);
+
+        response.setHeader("Authorization", "Bearer " + newAccessToken);
+        response.setHeader("Refresh", newRefreshToken);
+    }
+
+    private UserEntity findOrCreateUser(UserLoginRequestDto loginRequestDto) {
+        Optional<UserEntity> optionalUser = userRepository.findByLoginId(loginRequestDto.getLoginId());
+
+        if (optionalUser.isPresent()) {
+            return optionalUser.get();
+        } else {
+            loginRequestDto.setPassword(passwordEncoder.encode(loginRequestDto.getPassword()));
+            UserEntity user = UserEntity.from(loginRequestDto);
+            userRepository.save(user);
+            return user;
+        }
+    }
+
+    private static void clearResponseHeaders(HttpServletResponse response) {
+        response.setHeader("Authorization", null);
+        response.setHeader("Refresh", null);
     }
 }

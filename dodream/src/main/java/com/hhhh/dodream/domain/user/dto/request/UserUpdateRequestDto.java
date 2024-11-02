@@ -1,11 +1,12 @@
 package com.hhhh.dodream.domain.user.dto.request;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@NoArgsConstructor
+@Setter
 public class UserUpdateRequestDto {
     private String nickname;
     private String address;
+    private String email;
 }

@@ -6,6 +6,7 @@ import com.hhhh.dodream.domain.calender.dto.response.CalenderInquiryResponseDto;
 import com.hhhh.dodream.domain.calender.entity.CalenderEntity;
 import com.hhhh.dodream.domain.calender.repository.CalenderRepository;
 import com.hhhh.dodream.domain.user.entity.UserEntity;
+import com.hhhh.dodream.domain.user.repository.UserRepository;
 import com.hhhh.dodream.domain.user.service.UserService;
 import com.hhhh.dodream.global.exception.kind.agreed_exception.UnAuthorizedException;
 import com.hhhh.dodream.global.exception.kind.error_exception.DataFoundException;
@@ -19,6 +20,7 @@ import java.util.List;
 public class CalenderService {
     private final CalenderRepository calenderRepository;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     public List<CalenderInquiryResponseDto> get(Long userId, Integer year, Integer month) {
         return calenderRepository
@@ -28,7 +30,8 @@ public class CalenderService {
     }
 
     public Long save(Long userId, CalenderCreateRequestDto calenderRequest) {
-        UserEntity user = userService.findUser(userId);
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new DataFoundException("user db에 없습니다."));
         CalenderEntity calender = CalenderEntity.builder()
                 .dateInfo(calenderRequest.getDateInfo())
                 .title(calenderRequest.getTitle())

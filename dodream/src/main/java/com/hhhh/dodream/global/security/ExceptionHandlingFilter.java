@@ -13,9 +13,14 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 public class ExceptionHandlingFilter extends OncePerRequestFilter {
+    private final ObjectMapper objectMapper;
+
+    public ExceptionHandlingFilter(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
         } catch (CustomException e) {
@@ -23,12 +28,10 @@ public class ExceptionHandlingFilter extends OncePerRequestFilter {
         }
     }
 
-    private void setExceptionResponse(HttpServletResponse response, CustomException e)
-            throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
+    private void setExceptionResponse(HttpServletResponse response, CustomException e) throws IOException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        String jsonResponse = mapper.writeValueAsString(ResponseDto.of(e.getCode(), e.getMessage()));
-        response.getWriter().write(jsonResponse);
+        response.getWriter().write(objectMapper.writeValueAsString(ResponseDto.of(e.getCode(), e.getMessage())));
+
     }
 }

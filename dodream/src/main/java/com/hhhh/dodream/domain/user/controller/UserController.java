@@ -1,7 +1,5 @@
 package com.hhhh.dodream.domain.user.controller;
 
-import com.hhhh.dodream.domain.user.dto.request.UserPasswordUpdateRequestDto;
-import com.hhhh.dodream.domain.user.dto.request.UserUpdateRequestDto;
 import com.hhhh.dodream.domain.user.dto.request.*;
 import com.hhhh.dodream.domain.user.dto.response.UserDuplicatedResponseDto;
 import com.hhhh.dodream.domain.user.dto.response.UserEmailCodeCheckResponseDto;
@@ -60,8 +58,8 @@ public class UserController {
 
     @GetMapping
     public ResponseDto getUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        UserInquiryResponseDto body = userService.find(userDetails.getUserId());
-        return BodyResponseDto.onSuccess("정보 조회 성공", body);
+        UserInquiryResponseDto inquiryResponseDto = userService.get(userDetails.getUserId());
+        return BodyResponseDto.onSuccess("정보 조회 성공", inquiryResponseDto);
     }
 
     @PatchMapping
@@ -78,10 +76,10 @@ public class UserController {
         return ResponseDto.onSuccess("이미지 수정 성공");
     }
 
-    @PatchMapping("/changepw")
+    @PatchMapping("/change-password")
     public ResponseDto updateUserPassword(@AuthenticationPrincipal CustomUserDetails userDetails,
                                           @RequestBody UserPasswordUpdateRequestDto updateRequestDto) {
-        userService.updatePassword(userDetails.getUserId(), updateRequestDto);
+        userService.update(userDetails.getUserId(), updateRequestDto);
         return ResponseDto.onSuccess("비밀번호 수정 성공");
     }
 
