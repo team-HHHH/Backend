@@ -3,7 +3,7 @@ package com.hhhh.dodream.domain.poster.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.hhhh.dodream.domain.poster.entity.PosterInfo;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,8 +24,17 @@ public class PosterInfoResponse {
     private String title;
     private String content;
     private String participant;
-    private LocalDateTime startDay;
-    private LocalDateTime endDay;
+    private LocalDate startDay;
+    private LocalDate endDay;
+
+    public PosterInfoResponse(String title, String participants, String summary, LocalDate endDate,
+                              LocalDate startDate) {
+        this.title = title;
+        this.participant = participants;
+        this.content = summary;
+        this.endDay = endDate;
+        this.startDay = startDate;
+    }
 
     public static PosterInfoResponse fromEntity(PosterInfo posterInfo) {
         return new PosterInfoResponse(
@@ -37,8 +46,8 @@ public class PosterInfoResponse {
                 posterInfo.getTitle(),
                 posterInfo.getContent(),
                 posterInfo.getParticipant(),
-                posterInfo.getStartDay(),
-                posterInfo.getEndDay()
+                posterInfo.getStartDay().toLocalDate(),
+                posterInfo.getEndDay().toLocalDate()
         );
     }
 }

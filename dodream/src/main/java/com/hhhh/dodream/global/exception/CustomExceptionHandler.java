@@ -2,12 +2,11 @@ package com.hhhh.dodream.global.exception;
 
 import com.hhhh.dodream.global.common.dto.ResponseDto;
 import com.hhhh.dodream.global.exception.kind.CustomException;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import java.io.IOException;
 
 @Slf4j
 @RestControllerAdvice
