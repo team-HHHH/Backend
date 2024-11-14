@@ -1,20 +1,22 @@
 package com.hhhh.dodream.global.common.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
+@Builder
 public class ResponseDto {
     private ResultDto result;
 
     public static ResponseDto of(int code, String message) {
         ResultDto result = new ResultDto(code, message);
-        return new ResponseDto(result);
+        return ResponseDto.builder().result(result).build();
     }
 
     public static ResponseDto onSuccess(String message) {
         ResultDto success = ResultDto.success(message);
-        return new ResponseDto(success);
+        return ResponseDto.builder()
+                .result(success)
+                .build();
     }
 }

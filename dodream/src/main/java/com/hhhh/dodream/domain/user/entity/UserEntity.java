@@ -1,8 +1,8 @@
 package com.hhhh.dodream.domain.user.entity;
 
+import com.hhhh.dodream.domain.user.dto.request.UserLoginRequestDto;
 import com.hhhh.dodream.domain.user.dto.request.UserRegisterDetailRequestDto;
 import com.hhhh.dodream.domain.user.dto.request.UserUpdateRequestDto;
-import com.hhhh.dodream.domain.user.dto.response.UserInquiryResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,9 +10,9 @@ import static com.hhhh.dodream.global.common.utils.LambdaUtils.updateStringLambd
 
 @Entity
 @Getter
-@Table(name = "user")
 @Builder
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Table(name = "user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserEntity {
     @Id
@@ -26,7 +26,6 @@ public class UserEntity {
     @Column(name = "login_id", nullable = false)
     private String loginId;
 
-    @Setter
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -42,26 +41,29 @@ public class UserEntity {
     @Column(name = "role", nullable = false)
     private String role;
 
-    public UserInquiryResponseDto toInquiryDto() {
-        return UserInquiryResponseDto.builder()
-                .email(this.email)
-                .loginId(this.loginId)
-                .nickname(this.nickname)
-                .address(this.address)
-                .profileImg(this.imagePath)
+    public static UserEntity from(UserLoginRequestDto userLoginRequestDto) {
+        return UserEntity.builder()
+                .loginId(userLoginRequestDto.getLoginId())
+                .password(userLoginRequestDto.getPassword())
+                .role("ROLE_USER")
                 .build();
     }
 
-    public void updateEntity(UserUpdateRequestDto updateRequestDto){
+    public void modifyProfileImage(UserUpdateRequestDto updateRequestDto) {
         updateStringLambda(updateRequestDto.getNickname(), nickname -> this.nickname = nickname);
         updateStringLambda(updateRequestDto.getAddress(), address -> this.address = address);
+        updateStringLambda(updateRequestDto.getEmail(), email -> this.email = email);
     }
 
-    public void updateEntity(String imagePath){
+    public void modifyProfileImage(String imagePath) {
         this.imagePath = imagePath;
     }
 
-    public void registerDetail(UserRegisterDetailRequestDto dto, String imagePath){
+    public void modifyPassword(String password) {
+        this.password = password;
+    }
+
+    public void registerDetail(UserRegisterDetailRequestDto dto, String imagePath) {
         this.nickname = dto.getNickName();
         this.address = dto.getAddress();
         this.imagePath = imagePath;

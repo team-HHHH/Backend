@@ -1,10 +1,6 @@
 package com.hhhh.dodream.domain.user.service;
 
-import com.hhhh.dodream.domain.user.dto.request.EmailAuthRequestDto;
-import com.hhhh.dodream.domain.user.dto.request.UserPasswordUpdateRequestDto;
-import com.hhhh.dodream.domain.user.dto.request.UserRegisterDetailRequestDto;
-import com.hhhh.dodream.domain.user.dto.request.UserRegisterRequestDto;
-import com.hhhh.dodream.domain.user.dto.request.UserUpdateRequestDto;
+import com.hhhh.dodream.domain.user.dto.request.*;
 import com.hhhh.dodream.domain.user.dto.response.UserDuplicatedResponseDto;
 import com.hhhh.dodream.domain.user.dto.response.UserEmailCodeCheckResponseDto;
 import com.hhhh.dodream.domain.user.dto.response.UserInquiryResponseDto;
@@ -82,7 +78,7 @@ public class UserService {
         UserEntity user = userRepository.save(
                 new UserEntity(userRegisterRequestDto.getEmail(), userRegisterRequestDto.getLoginId(),
                         encodedPassword));
-        authService.setJWT(user, response);
+        authService.setJWT(user.getId(), user.getRole(), response);
     }
 
     @Transactional
@@ -96,50 +92,62 @@ public class UserService {
         user.registerDetail(detailRequestDto, imagePath);
     }
 
-    public UserInquiryResponseDto find(Long userId) {
+    public UserInquiryResponseDto get(Long userId) {
         UserEntity user = this.findUser(userId);
-        return user.toInquiryDto();
+        return UserInquiryResponseDto.from(user);
     }
 
     @Transactional
     public void update(UserUpdateRequestDto updateRequestDto, Long userId) {
         UserEntity user = this.findUser(userId);
-        user.updateEntity(updateRequestDto);
+
+        user.modifyProfileImage(updateRequestDto);
         userRepository.save(user);
     }
 
     @Transactional
     public void update(MultipartFile profileImage, Long userId) {
         UserEntity user = this.findUser(userId);
-        String imagePath = s3UploadService.uploadImageToS3(profileImage,
-                USER_IMAGE_PREFIX + user.getId());
-        if(!imagePath.equals(user.getImagePath())) {
-            user.updateEntity(imagePath);
-            userRepository.save(user);
-        }
+
+        String imagePath = s3UploadService.uploadImageToS3(profileImage, USER_IMAGE_PREFIX + user.getId());
+
+        updateProfileImageOnExtensionChange(imagePath, user);
     }
 
     @Transactional
-    public void updatePassword(Long userId, UserPasswordUpdateRequestDto updateRequestDto) {
+    public void update(Long userId, UserPasswordUpdateRequestDto updateRequestDto) {
         UserEntity user = this.findUser(userId);
-        if (passwordEncoder.matches(updateRequestDto.getOriginPw(), user.getPassword())) {
-            String encodedNewPw = passwordEncoder.encode(updateRequestDto.getNewPw());
-            user.setPassword(encodedNewPw);
-            userRepository.save(user);
-        } else {
-            throw new VerificationException("기존 비밀번호 불일치");
-        }
+
+        validateAndUpdatePassword(updateRequestDto, user);
     }
 
     public void checkNickname(Long userId) {
         UserEntity user = findUser(userId);
+
         if (ObjectUtils.isEmpty(user.getNickname())) {
             throw new MissingDataException("닉네임 부재");
         }
     }
 
-    public UserEntity findUser(Long userId) {
+    private UserEntity findUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new DataFoundException("user db에 없는 데이터입니다."));
+    }
+
+    private void updateProfileImageOnExtensionChange(String imagePath, UserEntity user) {
+        if (!imagePath.equals(user.getImagePath())) {
+            user.modifyProfileImage(imagePath);
+            userRepository.save(user);
+        }
+    }
+
+    private void validateAndUpdatePassword(UserPasswordUpdateRequestDto updateRequestDto, UserEntity user) {
+        if (passwordEncoder.matches(updateRequestDto.getOriginPw(), user.getPassword())) {
+            String encodedNewPw = passwordEncoder.encode(updateRequestDto.getNewPw());
+            user.modifyPassword(encodedNewPw);
+            userRepository.save(user);
+        } else {
+            throw new VerificationException("기존 비밀번호 불일치");
+        }
     }
 }

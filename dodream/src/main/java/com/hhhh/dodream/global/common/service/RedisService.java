@@ -1,24 +1,26 @@
 package com.hhhh.dodream.global.common.service;
 
-import com.hhhh.dodream.global.common.enums.RedisKeyPrefixEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
 @Service
 @RequiredArgsConstructor
 public class RedisService {
+
     private final StringRedisTemplate redisTemplate;
 
-    public void setKey(RedisKeyPrefixEnum keyPrefix,
-                       Long id, String refreshToken) {
-        redisTemplate.opsForValue()
-                .set(keyPrefix.getDescription() + id, refreshToken);
+    public void setKeyWithExpiration(String key, String value, long expiredTime) {
+        redisTemplate.opsForValue().set(key, value, Duration.ofMillis(expiredTime));
     }
 
-    public void deleteKey(RedisKeyPrefixEnum keyPrefix, Long id) {
-        redisTemplate.delete(keyPrefix.getDescription() + id);
+    public void deleteKey(String key) {
+        redisTemplate.delete(key);
+    }
+
+    public String getValue(String key) {
+        return redisTemplate.opsForValue().get(key);
     }
 }

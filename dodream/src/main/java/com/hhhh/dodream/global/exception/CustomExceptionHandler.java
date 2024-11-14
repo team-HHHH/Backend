@@ -20,12 +20,13 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(IOException.class)
     public ResponseDto handleIOException(IOException e) {
+        log.warn(e.getMessage(), e);
         return ResponseDto.of(500, "입출력 에러 발생");
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseDto handleRuntimeException(RuntimeException e) {
-        e.printStackTrace();
+        log.error(e.getMessage(), e);
         return ResponseDto.of(501, "알 수 없는 런타임 예외 발생");
     }
 }

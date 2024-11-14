@@ -1,10 +1,10 @@
 package com.hhhh.dodream.domain.user.dto.request;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@NoArgsConstructor
+@Setter
 public class UserPasswordUpdateRequestDto {
     private String originPw;
     private String newPw;
