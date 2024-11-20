@@ -24,6 +24,7 @@ public class CalenderInquiryResponseDto {
                 .calenderId(calender.getId())
                 .dateInfo(calender.getDateInfo())
                 .title(calender.getTitle())
+                .content(calender.getContent())
                 .startDay(calender.getStartDay())
                 .endDay(calender.getEndDay())
                 .build();
