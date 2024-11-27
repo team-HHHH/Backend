@@ -1,6 +1,10 @@
 package com.hhhh.dodream.domain.user.service;
 
-import com.hhhh.dodream.domain.user.dto.request.*;
+import com.hhhh.dodream.domain.user.dto.request.EmailAuthRequestDto;
+import com.hhhh.dodream.domain.user.dto.request.UserPasswordUpdateRequestDto;
+import com.hhhh.dodream.domain.user.dto.request.UserRegisterDetailRequestDto;
+import com.hhhh.dodream.domain.user.dto.request.UserRegisterRequestDto;
+import com.hhhh.dodream.domain.user.dto.request.UserUpdateRequestDto;
 import com.hhhh.dodream.domain.user.dto.response.UserDuplicatedResponseDto;
 import com.hhhh.dodream.domain.user.dto.response.UserEmailCodeCheckResponseDto;
 import com.hhhh.dodream.domain.user.dto.response.UserInquiryResponseDto;
@@ -8,6 +12,7 @@ import com.hhhh.dodream.domain.user.entity.UserEntity;
 import com.hhhh.dodream.domain.user.repository.UserRepository;
 import com.hhhh.dodream.global.cloud.service.S3UploadService;
 import com.hhhh.dodream.global.common.service.MailService;
+import com.hhhh.dodream.global.common.utils.RandomUtils;
 import com.hhhh.dodream.global.exception.kind.agreed_exception.DuplicatedException;
 import com.hhhh.dodream.global.exception.kind.agreed_exception.MissingDataException;
 import com.hhhh.dodream.global.exception.kind.agreed_exception.VerificationException;
@@ -35,7 +40,8 @@ public class UserService {
         if (checkEmailDuplication(email).isDuplicated()) {
             throw new DuplicatedException("이미 가입된 이메일입니다.");
         }
-        int authCode = mailService.sendAuthCodeOnMail(email);
+        Integer authCode = RandomUtils.getAuthCode();
+        mailService.sendAuthCodeOnMail(email, authCode);
         userRedisService.saveAuthCode(email, authCode);
     }
 

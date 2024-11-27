@@ -1,11 +1,11 @@
 package com.hhhh.dodream.global.common.service;
 
-import com.hhhh.dodream.global.common.utils.RandomUtils;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,7 +25,7 @@ public class MailService {
             String body = "";
             body += "<h3>" + "회원가입을 위한 인증 번호입니다." + "</h3>";
             body += "<h1>" + authCode + "</h1>";
-            message.setText(body,"UTF-8", "html");
+            message.setText(body, "UTF-8", "html");
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -33,11 +33,9 @@ public class MailService {
         return message;
     }
 
-    public int sendAuthCodeOnMail(String mail) {
-        Integer authCode = RandomUtils.getAuthCode();
-        MimeMessage message = createMail(mail,authCode);
+    @Async
+    public void sendAuthCodeOnMail(String mail, Integer authCode) {
+        MimeMessage message = createMail(mail, authCode);
         javaMailSender.send(message);
-
-        return authCode;
     }
 }
