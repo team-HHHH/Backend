@@ -6,7 +6,7 @@ import com.hhhh.dodream.domain.poster.dto.request.PosterUploadRequest;
 import com.hhhh.dodream.domain.poster.dto.response.PosterInfoResponse;
 import com.hhhh.dodream.domain.poster.entity.PosterInfo;
 import com.hhhh.dodream.domain.poster.repository.PostInfoRepository;
-import com.hhhh.dodream.global.cloud.service.S3UploadService;
+import com.hhhh.dodream.global.common.service.S3UploadService;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;

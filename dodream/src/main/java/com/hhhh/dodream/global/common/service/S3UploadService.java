@@ -1,13 +1,14 @@
-package com.hhhh.dodream.global.cloud.service;
+package com.hhhh.dodream.global.common.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.hhhh.dodream.global.exception.kind.error_exception.S3UploadException;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor

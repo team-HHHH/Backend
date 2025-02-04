@@ -10,7 +10,7 @@ import com.hhhh.dodream.domain.user.dto.response.UserEmailCodeCheckResponseDto;
 import com.hhhh.dodream.domain.user.dto.response.UserInquiryResponseDto;
 import com.hhhh.dodream.domain.user.entity.UserEntity;
 import com.hhhh.dodream.domain.user.repository.UserRepository;
-import com.hhhh.dodream.global.cloud.service.S3UploadService;
+import com.hhhh.dodream.global.common.service.S3UploadService;
 import com.hhhh.dodream.global.common.service.MailService;
 import com.hhhh.dodream.global.common.utils.RandomUtils;
 import com.hhhh.dodream.global.exception.kind.agreed_exception.DuplicatedException;
