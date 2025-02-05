@@ -63,10 +63,10 @@ public class UserEntity {
         this.password = password;
     }
 
-    public void registerDetail(UserRegisterDetailRequestDto dto, String imagePath) {
+    public void registerDetail(UserRegisterDetailRequestDto dto) {
         this.nickname = dto.getNickName();
         this.address = dto.getAddress();
-        this.imagePath = imagePath;
+        this.imagePath = dto.getImagePath();
     }
 
     public UserEntity(String email, String loginId, String password) {

@@ -1,17 +1,13 @@
 package com.hhhh.dodream.domain.user.service;
 
-import com.hhhh.dodream.domain.user.dto.request.EmailAuthRequestDto;
-import com.hhhh.dodream.domain.user.dto.request.UserPasswordUpdateRequestDto;
-import com.hhhh.dodream.domain.user.dto.request.UserRegisterDetailRequestDto;
-import com.hhhh.dodream.domain.user.dto.request.UserRegisterRequestDto;
-import com.hhhh.dodream.domain.user.dto.request.UserUpdateRequestDto;
+import com.hhhh.dodream.domain.user.dto.request.*;
 import com.hhhh.dodream.domain.user.dto.response.UserDuplicatedResponseDto;
 import com.hhhh.dodream.domain.user.dto.response.UserEmailCodeCheckResponseDto;
 import com.hhhh.dodream.domain.user.dto.response.UserInquiryResponseDto;
 import com.hhhh.dodream.domain.user.entity.UserEntity;
 import com.hhhh.dodream.domain.user.repository.UserRepository;
-import com.hhhh.dodream.global.common.service.S3ImageService;
 import com.hhhh.dodream.global.common.service.MailService;
+import com.hhhh.dodream.global.common.service.S3ImageService;
 import com.hhhh.dodream.global.common.utils.RandomUtils;
 import com.hhhh.dodream.global.exception.kind.agreed_exception.DuplicatedException;
 import com.hhhh.dodream.global.exception.kind.agreed_exception.MissingDataException;
@@ -23,7 +19,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -93,9 +88,7 @@ public class UserService {
         if (checkNicknameDuplication(detailRequestDto.getNickName()).isDuplicated()) {
             throw new DuplicatedException("중복된 닉네임입니다.");
         }
-        String imagePath = s3ImageService.uploadImageToS3(detailRequestDto.getProfileImage(),
-                USER_IMAGE_PREFIX + user.getId());
-        user.registerDetail(detailRequestDto, imagePath);
+        user.registerDetail(detailRequestDto);
     }
 
     public UserInquiryResponseDto get(Long userId) {
@@ -112,10 +105,8 @@ public class UserService {
     }
 
     @Transactional
-    public void update(MultipartFile profileImage, Long userId) {
+    public void update(String imagePath, Long userId) {
         UserEntity user = this.findUser(userId);
-
-        String imagePath = s3ImageService.uploadImageToS3(profileImage, USER_IMAGE_PREFIX + user.getId());
 
         updateProfileImageOnExtensionChange(imagePath, user);
     }

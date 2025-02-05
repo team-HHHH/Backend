@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -70,9 +69,9 @@ public class UserController {
     }
 
     @PatchMapping("/image")
-    public ResponseDto updateProfileImage(@RequestParam("profileImage") MultipartFile profileImage,
+    public ResponseDto updateProfileImage(@RequestParam("imagePath") String imagePath,
                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
-        userService.update(profileImage, userDetails.getUserId());
+        userService.update(imagePath, userDetails.getUserId());
         return ResponseDto.onSuccess("이미지 수정 성공");
     }
 
