@@ -10,7 +10,7 @@ import com.hhhh.dodream.domain.user.dto.response.UserEmailCodeCheckResponseDto;
 import com.hhhh.dodream.domain.user.dto.response.UserInquiryResponseDto;
 import com.hhhh.dodream.domain.user.entity.UserEntity;
 import com.hhhh.dodream.domain.user.repository.UserRepository;
-import com.hhhh.dodream.global.common.service.S3UploadService;
+import com.hhhh.dodream.global.common.service.S3ImageService;
 import com.hhhh.dodream.global.common.service.MailService;
 import com.hhhh.dodream.global.common.utils.RandomUtils;
 import com.hhhh.dodream.global.exception.kind.agreed_exception.DuplicatedException;
@@ -31,7 +31,7 @@ public class UserService {
     private static final String USER_IMAGE_PREFIX = "user_image/";
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final S3UploadService s3UploadService;
+    private final S3ImageService s3ImageService;
     private final MailService mailService;
     private final UserRedisService userRedisService;
     private final AuthService authService;
@@ -93,7 +93,7 @@ public class UserService {
         if (checkNicknameDuplication(detailRequestDto.getNickName()).isDuplicated()) {
             throw new DuplicatedException("중복된 닉네임입니다.");
         }
-        String imagePath = s3UploadService.uploadImageToS3(detailRequestDto.getProfileImage(),
+        String imagePath = s3ImageService.uploadImageToS3(detailRequestDto.getProfileImage(),
                 USER_IMAGE_PREFIX + user.getId());
         user.registerDetail(detailRequestDto, imagePath);
     }
@@ -115,7 +115,7 @@ public class UserService {
     public void update(MultipartFile profileImage, Long userId) {
         UserEntity user = this.findUser(userId);
 
-        String imagePath = s3UploadService.uploadImageToS3(profileImage, USER_IMAGE_PREFIX + user.getId());
+        String imagePath = s3ImageService.uploadImageToS3(profileImage, USER_IMAGE_PREFIX + user.getId());
 
         updateProfileImageOnExtensionChange(imagePath, user);
     }

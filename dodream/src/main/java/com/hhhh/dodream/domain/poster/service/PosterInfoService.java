@@ -6,7 +6,7 @@ import com.hhhh.dodream.domain.poster.dto.request.PosterUploadRequest;
 import com.hhhh.dodream.domain.poster.dto.response.PosterInfoResponse;
 import com.hhhh.dodream.domain.poster.entity.PosterInfo;
 import com.hhhh.dodream.domain.poster.repository.PostInfoRepository;
-import com.hhhh.dodream.global.common.service.S3UploadService;
+import com.hhhh.dodream.global.common.service.S3ImageService;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,7 +24,7 @@ public class PosterInfoService {
     private static final int PAGE_SIZE = 10;
     private static final String POSTER_IMAGE_PREFIX = "poster_image/";
     private final PostInfoRepository postInfoRepository;
-    private final S3UploadService s3UploadService;
+    private final S3ImageService s3ImageService;
     private final PosterImageProcessingService posterImageProcessingService;
 
     /**
@@ -73,7 +73,7 @@ public class PosterInfoService {
     @Transactional
     public PosterInfoResponse uploadAndProcessImage(PosterUploadRequest request) {
         String uuid = UUID.randomUUID().toString();
-        String url = s3UploadService.uploadImageToS3(request.getFile(), POSTER_IMAGE_PREFIX + uuid);
+        String url = s3ImageService.uploadImageToS3(request.getFile(), POSTER_IMAGE_PREFIX + uuid);
         PosterInfoResponse posterInfoResponse = posterImageProcessingService.processImage(request.getFile());
         posterInfoResponse.setImages(url);
         return posterInfoResponse;

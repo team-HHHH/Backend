@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
-public class S3UploadService {
+public class S3ImageService {
 
     private final AmazonS3 amazonS3;
 
