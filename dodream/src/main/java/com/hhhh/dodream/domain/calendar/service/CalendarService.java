@@ -1,7 +1,6 @@
 package com.hhhh.dodream.domain.calendar.service;
 
-import com.hhhh.dodream.domain.calendar.dto.request.CalendarCreateRequestDto;
-import com.hhhh.dodream.domain.calendar.dto.request.CalendarUpdateRequestDto;
+import com.hhhh.dodream.domain.calendar.dto.request.CalendarUpsertRequestDto;
 import com.hhhh.dodream.domain.calendar.dto.response.CalendarInquiryResponseDto;
 import com.hhhh.dodream.domain.calendar.entity.CalendarEntity;
 import com.hhhh.dodream.domain.calendar.repository.CalendarRepository;
@@ -21,22 +20,33 @@ public class CalendarService {
     private final UserRepository userRepository;
     private final CalendarRepository calendarRepository;
 
-    public List<CalendarInquiryResponseDto> get(Long userId, Integer year, Integer month) {
-        List<CalendarEntity> calendars = calendarRepository
-                .findAllByUserIdAndDateInfoYearAndDateInfoMonth(userId, year, month);
+    public List<CalendarInquiryResponseDto> get(
+            Integer year,
+            Integer month,
+            Long userId
+    ) {
+        List<CalendarEntity> calendars = calendarRepository.findAllByUserIdAndDateInfoYearAndDateInfoMonth(
+                userId,
+                year,
+                month
+        );
 
-        return calendars.stream().map(CalendarInquiryResponseDto::from).toList();
+        return calendars.stream()
+                .map(CalendarInquiryResponseDto::from)
+                .toList();
 
     }
 
     public List<CalendarInquiryResponseDto> get(Long userId) {
         List<CalendarEntity> calendars = calendarRepository.findAllByUserId(userId);
 
-        return calendars.stream().map(CalendarInquiryResponseDto::from).toList();
+        return calendars.stream()
+                .map(CalendarInquiryResponseDto::from)
+                .toList();
     }
 
     @Transactional
-    public Long save(Long userId, CalendarCreateRequestDto calendarRequest) {
+    public Long save(Long userId, CalendarUpsertRequestDto calendarRequest) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new DataFoundException("user db에 없습니다."));
 
@@ -47,21 +57,36 @@ public class CalendarService {
     }
 
     @Transactional
-    public void update(Long userId, Long calendarId, CalendarUpdateRequestDto updateRequestDto) {
-        CalendarEntity calendar = validatecalendarWithUser(calendarId, userId, "수정");
+    public void update(
+            Long userId,
+            Long calendarId,
+            CalendarUpsertRequestDto updateRequestDto
+    ) {
+        CalendarEntity calendar = validateCalendarWithUser(
+                calendarId,
+                userId,
+                "수정"
+        );
 
         calendar.modify(updateRequestDto);
-        calendarRepository.save(calendar);
     }
 
     @Transactional
     public void delete(Long userId, Long calendarId) {
-        CalendarEntity calendar = validatecalendarWithUser(calendarId, userId, "삭제");
+        CalendarEntity calendar = validateCalendarWithUser(
+                calendarId,
+                userId,
+                "삭제"
+        );
 
         calendarRepository.delete(calendar);
     }
 
-    private CalendarEntity validatecalendarWithUser(Long calendarId, Long userId, String action) {
+    private CalendarEntity validateCalendarWithUser(
+            Long calendarId,
+            Long userId,
+            String action
+    ) {
         CalendarEntity calendar = calendarRepository.findByIdWithUser(calendarId)
                 .orElseThrow(() -> new DataFoundException("calendar db에 없는 데이터입니다."));
 

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class CalendarUpdateRequestDto {
+public class CalendarUpsertRequestDto {
     private DateInfo dateInfo;
     private String title;
     private String content;

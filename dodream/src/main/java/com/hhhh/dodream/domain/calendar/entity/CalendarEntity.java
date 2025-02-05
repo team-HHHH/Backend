@@ -1,7 +1,6 @@
 package com.hhhh.dodream.domain.calendar.entity;
 
-import com.hhhh.dodream.domain.calendar.dto.request.CalendarCreateRequestDto;
-import com.hhhh.dodream.domain.calendar.dto.request.CalendarUpdateRequestDto;
+import com.hhhh.dodream.domain.calendar.dto.request.CalendarUpsertRequestDto;
 import com.hhhh.dodream.domain.calendar.entity.embedded.DateInfo;
 import com.hhhh.dodream.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
@@ -14,8 +13,8 @@ import static com.hhhh.dodream.global.common.utils.LambdaUtils.updateLambda;
 @Entity
 @Getter
 @Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "calendar")
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 public class CalendarEntity {
     @Id
@@ -42,7 +41,7 @@ public class CalendarEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    public static CalendarEntity of(CalendarCreateRequestDto createRequestDto, UserEntity user) {
+    public static CalendarEntity of(CalendarUpsertRequestDto createRequestDto, UserEntity user) {
         return CalendarEntity.builder()
                 .dateInfo(createRequestDto.getDateInfo())
                 .title(createRequestDto.getTitle())
@@ -53,7 +52,7 @@ public class CalendarEntity {
                 .build();
     }
 
-    public void modify(CalendarUpdateRequestDto updateRequest) {
+    public void modify(CalendarUpsertRequestDto updateRequest) {
         updateLambda(updateRequest.getDateInfo(), dateInfo -> this.dateInfo = dateInfo);
         updateLambda(updateRequest.getTitle(), title -> this.title = title);
         updateLambda(updateRequest.getContent(), content -> this.content = content);
