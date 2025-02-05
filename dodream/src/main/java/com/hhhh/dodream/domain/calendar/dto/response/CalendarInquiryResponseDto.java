@@ -12,21 +12,21 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class CalendarInquiryResponseDto {
-    private Long calenderId;
+    private Long calendarId;
     private DateInfo dateInfo;
     private String title;
     private String content;
     private LocalDateTime startDay;
     private LocalDateTime endDay;
 
-    public static CalendarInquiryResponseDto from(CalendarEntity calender) {
+    public static CalendarInquiryResponseDto from(CalendarEntity calendar) {
         return CalendarInquiryResponseDto.builder()
-                .calenderId(calender.getId())
-                .dateInfo(calender.getDateInfo())
-                .title(calender.getTitle())
-                .content(calender.getContent())
-                .startDay(calender.getStartDay())
-                .endDay(calender.getEndDay())
+                .calendarId(calendar.getId())
+                .dateInfo(calendar.getDateInfo())
+                .title(calendar.getTitle())
+                .content(calendar.getContent())
+                .startDay(calendar.getStartDay())
+                .endDay(calendar.getEndDay())
                 .build();
     }
 }

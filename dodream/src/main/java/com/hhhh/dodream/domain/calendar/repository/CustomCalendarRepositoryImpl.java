@@ -14,10 +14,10 @@ public class CustomCalendarRepositoryImpl implements CustomCalendarRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Optional<CalendarEntity> findByIdWithUser(Long calenderId) {
+    public Optional<CalendarEntity> findByIdWithUser(Long calendarId) {
         return Optional.ofNullable(
                 jpaQueryFactory.selectFrom(calendarEntity)
-                        .where(calendarEntity.id.eq(calenderId))
+                        .where(calendarEntity.id.eq(calendarId))
                         .join(calendarEntity.user).fetchJoin()
                         .fetchOne()
         );
