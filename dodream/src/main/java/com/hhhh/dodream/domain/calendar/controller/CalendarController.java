@@ -1,9 +1,9 @@
-package com.hhhh.dodream.domain.calender.controller;
+package com.hhhh.dodream.domain.calendar.controller;
 
-import com.hhhh.dodream.domain.calender.dto.request.CalenderCreateRequestDto;
-import com.hhhh.dodream.domain.calender.dto.request.CalenderUpdateRequestDto;
-import com.hhhh.dodream.domain.calender.dto.response.CalenderInquiryResponseDto;
-import com.hhhh.dodream.domain.calender.service.CalenderService;
+import com.hhhh.dodream.domain.calendar.dto.request.CalendarCreateRequestDto;
+import com.hhhh.dodream.domain.calendar.dto.request.CalendarUpdateRequestDto;
+import com.hhhh.dodream.domain.calendar.dto.response.CalendarInquiryResponseDto;
+import com.hhhh.dodream.domain.calendar.service.CalendarService;
 import com.hhhh.dodream.global.common.dto.BodyResponseDto;
 import com.hhhh.dodream.global.common.dto.ResponseDto;
 import com.hhhh.dodream.global.security.CustomUserDetails;
@@ -16,42 +16,42 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/calenders")
-public class CalenderController {
-    private final CalenderService calenderService;
+public class CalendarController {
+    private final CalendarService calendarService;
 
     @GetMapping("/{year}/{month}")
     public ResponseDto getCalenders(@AuthenticationPrincipal CustomUserDetails userDetails,
                                     @PathVariable("year") Integer year, @PathVariable("month") Integer month) {
-        List<CalenderInquiryResponseDto> inquiryResponseDtoList = calenderService.get(userDetails.getUserId(), year, month);
+        List<CalendarInquiryResponseDto> inquiryResponseDtoList = calendarService.get(userDetails.getUserId(), year, month);
         return BodyResponseDto.onSuccess("캘린더 조회 성공", inquiryResponseDtoList);
     }
 
     @GetMapping
     public ResponseDto getCalenders(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        List<CalenderInquiryResponseDto> inquiryResponseDtoList = calenderService.get(userDetails.getUserId());
+        List<CalendarInquiryResponseDto> inquiryResponseDtoList = calendarService.get(userDetails.getUserId());
         return BodyResponseDto.onSuccess("캘린더 조회 성공", inquiryResponseDtoList);
     }
 
     @PostMapping
-    public ResponseDto saveCalender(@RequestBody CalenderCreateRequestDto createRequestDto,
+    public ResponseDto saveCalender(@RequestBody CalendarCreateRequestDto createRequestDto,
                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
-        Long calenderId = calenderService.save(userDetails.getUserId(), createRequestDto);
+        Long calenderId = calendarService.save(userDetails.getUserId(), createRequestDto);
         return BodyResponseDto.onSuccess("캘린더 저장 성공", calenderId);
     }
 
     //TODO 여기부터 해야 됨
     @PatchMapping("/{calenderId}")
     public ResponseDto updateCalender(@PathVariable("calenderId") Long calenderId,
-                                      @RequestBody CalenderUpdateRequestDto updateRequestDto,
+                                      @RequestBody CalendarUpdateRequestDto updateRequestDto,
                                       @AuthenticationPrincipal CustomUserDetails userDetails) {
-        calenderService.update(userDetails.getUserId(), calenderId, updateRequestDto);
+        calendarService.update(userDetails.getUserId(), calenderId, updateRequestDto);
         return ResponseDto.onSuccess("캘린더 수정 성공");
     }
 
     @DeleteMapping("/{calenderId}")
     public ResponseDto deleteCalender(@PathVariable("calenderId") Long calenderId,
                                       @AuthenticationPrincipal CustomUserDetails userDetails) {
-        calenderService.delete(userDetails.getUserId(), calenderId);
+        calendarService.delete(userDetails.getUserId(), calenderId);
         return ResponseDto.onSuccess("캘린더 삭제 성공");
     }
 }

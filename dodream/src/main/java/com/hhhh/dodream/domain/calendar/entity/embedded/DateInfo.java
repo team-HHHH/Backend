@@ -1,4 +1,4 @@
-package com.hhhh.dodream.domain.calender.entity.embedded;
+package com.hhhh.dodream.domain.calendar.entity.embedded;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

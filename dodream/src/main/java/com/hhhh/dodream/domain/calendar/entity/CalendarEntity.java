@@ -1,8 +1,8 @@
-package com.hhhh.dodream.domain.calender.entity;
+package com.hhhh.dodream.domain.calendar.entity;
 
-import com.hhhh.dodream.domain.calender.dto.request.CalenderCreateRequestDto;
-import com.hhhh.dodream.domain.calender.dto.request.CalenderUpdateRequestDto;
-import com.hhhh.dodream.domain.calender.entity.embedded.DateInfo;
+import com.hhhh.dodream.domain.calendar.dto.request.CalendarCreateRequestDto;
+import com.hhhh.dodream.domain.calendar.dto.request.CalendarUpdateRequestDto;
+import com.hhhh.dodream.domain.calendar.entity.embedded.DateInfo;
 import com.hhhh.dodream.domain.user.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,9 +15,9 @@ import static com.hhhh.dodream.global.common.utils.LambdaUtils.updateLambda;
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Table(name = "calender")
+@Table(name = "calendar")
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
-public class CalenderEntity {
+public class CalendarEntity {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,8 +42,8 @@ public class CalenderEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    public static CalenderEntity of(CalenderCreateRequestDto createRequestDto, UserEntity user) {
-        return CalenderEntity.builder()
+    public static CalendarEntity of(CalendarCreateRequestDto createRequestDto, UserEntity user) {
+        return CalendarEntity.builder()
                 .dateInfo(createRequestDto.getDateInfo())
                 .title(createRequestDto.getTitle())
                 .content(createRequestDto.getContent())
@@ -53,7 +53,7 @@ public class CalenderEntity {
                 .build();
     }
 
-    public void modify(CalenderUpdateRequestDto updateRequest) {
+    public void modify(CalendarUpdateRequestDto updateRequest) {
         updateLambda(updateRequest.getDateInfo(), dateInfo -> this.dateInfo = dateInfo);
         updateLambda(updateRequest.getTitle(), title -> this.title = title);
         updateLambda(updateRequest.getContent(), content -> this.content = content);

@@ -1,6 +1,6 @@
-package com.hhhh.dodream.domain.calender.dto.request;
+package com.hhhh.dodream.domain.calendar.dto.request;
 
-import com.hhhh.dodream.domain.calender.entity.embedded.DateInfo;
+import com.hhhh.dodream.domain.calendar.entity.embedded.DateInfo;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class CalenderUpdateRequestDto {
+public class CalendarCreateRequestDto {
     private DateInfo dateInfo;
     private String title;
     private String content;
