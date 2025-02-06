@@ -52,9 +52,9 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/users/login/**").permitAll()
-                        .requestMatchers("/users/reissue").permitAll()
-                        .requestMatchers("/users/logout").permitAll()
+                        .requestMatchers("/auth/login/**").permitAll()
+                        .requestMatchers("/auth/reissue").permitAll()
+                        .requestMatchers("/auth/logout").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users/check/**").permitAll()
                         .requestMatchers("/users/register").permitAll()
                         .requestMatchers("/posters/location/**").permitAll()
