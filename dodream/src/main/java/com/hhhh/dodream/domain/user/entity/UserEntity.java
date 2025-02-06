@@ -53,10 +53,7 @@ public class UserEntity {
         updateStringLambda(updateRequestDto.getNickname(), nickname -> this.nickname = nickname);
         updateStringLambda(updateRequestDto.getAddress(), address -> this.address = address);
         updateStringLambda(updateRequestDto.getEmail(), email -> this.email = email);
-    }
-
-    public void modifyProfileImage(String imagePath) {
-        this.imagePath = imagePath;
+        updateStringLambda(updateRequestDto.getImagePath(), imagePath -> this.imagePath = imagePath);
     }
 
     public void modifyPassword(String password) {

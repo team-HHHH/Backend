@@ -72,15 +72,6 @@ public class UserController {
         return ResponseDto.onSuccess("정보 수정 성공");
     }
 
-    @PatchMapping("/image")
-    public ResponseDto updateProfileImage(
-            @RequestParam("imagePath") String imagePath, @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
-        userService.update(imagePath, userDetails.getUserId());
-
-        return ResponseDto.onSuccess("이미지 수정 성공");
-    }
-
     @PatchMapping("/change-password")
     public ResponseDto updateUserPassword(
             @RequestBody UserPasswordUpdateRequestDto updateRequestDto,

@@ -103,13 +103,6 @@ public class UserService {
     }
 
     @Transactional
-    public void update(String imagePath, Long userId) {
-        UserEntity user = this.findUser(userId);
-
-        updateProfileImageOnExtensionChange(imagePath, user);
-    }
-
-    @Transactional
     public void update(UserPasswordUpdateRequestDto updateRequestDto, Long userId) {
         UserEntity user = this.findUser(userId);
 
@@ -127,13 +120,6 @@ public class UserService {
     private UserEntity findUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new DataFoundException("user db에 없는 데이터입니다."));
-    }
-
-    private void updateProfileImageOnExtensionChange(String imagePath, UserEntity user) {
-        if (!imagePath.equals(user.getImagePath())) {
-            user.modifyProfileImage(imagePath);
-            userRepository.save(user);
-        }
     }
 
     private void validateAndUpdatePassword(UserPasswordUpdateRequestDto updateRequestDto, UserEntity user) {
