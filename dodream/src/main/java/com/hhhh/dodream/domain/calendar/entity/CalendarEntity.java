@@ -8,7 +8,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-import static com.hhhh.dodream.global.common.utils.LambdaUtils.updateLambda;
+import static com.hhhh.dodream.global.common.utils.LambdaUtils.updateFieldUsingLambda;
 
 @Entity
 @Getter
@@ -53,10 +53,10 @@ public class CalendarEntity {
     }
 
     public void modify(CalendarUpsertRequestDto updateRequest) {
-        updateLambda(updateRequest.getDateInfo(), dateInfo -> this.dateInfo = dateInfo);
-        updateLambda(updateRequest.getTitle(), title -> this.title = title);
-        updateLambda(updateRequest.getContent(), content -> this.content = content);
-        updateLambda(updateRequest.getStartDay(), startDay -> this.startDay = startDay);
-        updateLambda(updateRequest.getEndDay(), endDay -> this.endDay = endDay);
+        updateFieldUsingLambda(updateRequest.getDateInfo(), dateInfo -> this.dateInfo = dateInfo);
+        updateFieldUsingLambda(updateRequest.getTitle(), title -> this.title = title);
+        updateFieldUsingLambda(updateRequest.getContent(), content -> this.content = content);
+        updateFieldUsingLambda(updateRequest.getStartDay(), startDay -> this.startDay = startDay);
+        updateFieldUsingLambda(updateRequest.getEndDay(), endDay -> this.endDay = endDay);
     }
 }

@@ -6,7 +6,7 @@ import com.hhhh.dodream.domain.user.dto.request.UserUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 
-import static com.hhhh.dodream.global.common.utils.LambdaUtils.updateStringLambda;
+import static com.hhhh.dodream.global.common.utils.LambdaUtils.updateStringFieldUsingLambda;
 
 @Entity
 @Getter
@@ -50,10 +50,10 @@ public class UserEntity {
     }
 
     public void modify(UserUpdateRequestDto updateRequestDto) {
-        updateStringLambda(updateRequestDto.getNickname(), nickname -> this.nickname = nickname);
-        updateStringLambda(updateRequestDto.getAddress(), address -> this.address = address);
-        updateStringLambda(updateRequestDto.getEmail(), email -> this.email = email);
-        updateStringLambda(updateRequestDto.getImagePath(), imagePath -> this.imagePath = imagePath);
+        updateStringFieldUsingLambda(updateRequestDto.getNickname(), nickname -> this.nickname = nickname);
+        updateStringFieldUsingLambda(updateRequestDto.getAddress(), address -> this.address = address);
+        updateStringFieldUsingLambda(updateRequestDto.getEmail(), email -> this.email = email);
+        updateStringFieldUsingLambda(updateRequestDto.getImagePath(), imagePath -> this.imagePath = imagePath);
     }
 
     public void modifyPassword(String password) {
