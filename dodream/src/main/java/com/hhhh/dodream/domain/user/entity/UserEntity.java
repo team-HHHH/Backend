@@ -11,7 +11,7 @@ import static com.hhhh.dodream.global.common.utils.LambdaUtils.updateStringLambd
 @Entity
 @Getter
 @Builder
-@Table(name = "user")
+@Table(name = "users")
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserEntity {
