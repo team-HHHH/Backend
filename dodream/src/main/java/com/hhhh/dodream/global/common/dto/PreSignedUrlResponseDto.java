@@ -5,7 +5,6 @@ import lombok.*;
 @Getter
 @Builder
 public class PreSignedUrlResponseDto {
-
     private String preSingedUrl;
     private String imageSaveUrl;
 

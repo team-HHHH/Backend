@@ -9,7 +9,6 @@ import java.time.Duration;
 @Service
 @RequiredArgsConstructor
 public class RedisService {
-
     private final StringRedisTemplate redisTemplate;
 
     public void setKeyWithExpiration(String key, String value, long expiredTime) {

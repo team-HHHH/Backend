@@ -10,11 +10,15 @@ public class ResponseDto {
 
     public static ResponseDto of(int code, String message) {
         ResultDto result = new ResultDto(code, message);
-        return ResponseDto.builder().result(result).build();
+
+        return ResponseDto.builder()
+                .result(result)
+                .build();
     }
 
     public static ResponseDto onSuccess(String message) {
         ResultDto success = ResultDto.success(message);
+
         return ResponseDto.builder()
                 .result(success)
                 .build();

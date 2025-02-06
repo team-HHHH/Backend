@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ImageMimeTypeUtil {
-
     private static final Map<String, String> mimeTypes = new HashMap<>();
 
     static {

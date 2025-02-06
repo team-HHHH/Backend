@@ -13,6 +13,7 @@ public class BodyResponseDto<T> extends ResponseDto {
 
     public static <T> BodyResponseDto<T> onSuccess(String message, T body) {
         ResultDto success = ResultDto.success(message);
+
         return new BodyResponseDto<>(success, body);
     }
 }

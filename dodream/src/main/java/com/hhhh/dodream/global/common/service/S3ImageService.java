@@ -22,7 +22,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class S3ImageService {
-
     private final AmazonS3 amazonS3;
 
     @Value("${cloud.aws.s3.bucket}")
