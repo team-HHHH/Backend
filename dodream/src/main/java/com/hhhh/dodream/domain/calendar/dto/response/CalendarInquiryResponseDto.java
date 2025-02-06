@@ -1,10 +1,9 @@
 package com.hhhh.dodream.domain.calendar.dto.response;
 
+import com.hhhh.dodream.domain.calendar.dto.DateInfoDto;
 import com.hhhh.dodream.domain.calendar.entity.CalendarEntity;
-import com.hhhh.dodream.domain.calendar.entity.embedded.DateInfo;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 public class CalendarInquiryResponseDto {
     private Long calendarId;
-    private DateInfo dateInfo;
+    private DateInfoDto dateInfo;
     private String title;
     private String content;
     private LocalDateTime startDay;
@@ -21,7 +20,7 @@ public class CalendarInquiryResponseDto {
     public static CalendarInquiryResponseDto from(CalendarEntity calendar) {
         return CalendarInquiryResponseDto.builder()
                 .calendarId(calendar.getId())
-                .dateInfo(calendar.getDateInfo())
+                .dateInfo(DateInfoDto.from(calendar.getDateInfo()))
                 .title(calendar.getTitle())
                 .content(calendar.getContent())
                 .startDay(calendar.getStartDay())

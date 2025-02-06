@@ -43,7 +43,7 @@ public class CalendarEntity {
 
     public static CalendarEntity of(CalendarUpsertRequestDto createRequestDto, UserEntity user) {
         return CalendarEntity.builder()
-                .dateInfo(createRequestDto.getDateInfo())
+                .dateInfo(DateInfo.from(createRequestDto.getDateInfo()))
                 .title(createRequestDto.getTitle())
                 .content(createRequestDto.getContent())
                 .startDay(createRequestDto.getStartDay())
@@ -53,7 +53,7 @@ public class CalendarEntity {
     }
 
     public void modify(CalendarUpsertRequestDto updateRequest) {
-        updateFieldUsingLambda(updateRequest.getDateInfo(), dateInfo -> this.dateInfo = dateInfo);
+        updateFieldUsingLambda(DateInfo.from(updateRequest.getDateInfo()), dateInfo -> this.dateInfo = dateInfo);
         updateFieldUsingLambda(updateRequest.getTitle(), title -> this.title = title);
         updateFieldUsingLambda(updateRequest.getContent(), content -> this.content = content);
         updateFieldUsingLambda(updateRequest.getStartDay(), startDay -> this.startDay = startDay);

@@ -9,6 +9,7 @@ import com.hhhh.dodream.global.common.dto.BodyResponseDto;
 import com.hhhh.dodream.global.common.dto.ResponseDto;
 import com.hhhh.dodream.global.security.custom.CustomUserDetails;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -64,7 +65,7 @@ public class UserController {
 
     @PatchMapping
     public ResponseDto updateUser(
-            @RequestBody UserUpdateRequestDto updateRequestDto,
+            @Valid @RequestBody UserUpdateRequestDto updateRequestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         userService.update(updateRequestDto, userDetails.getUserId());
@@ -74,7 +75,7 @@ public class UserController {
 
     @PatchMapping("/password")
     public ResponseDto updateUserPassword(
-            @RequestBody UserPasswordUpdateRequestDto updateRequestDto,
+            @Valid @RequestBody UserPasswordUpdateRequestDto updateRequestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         userService.update(updateRequestDto, userDetails.getUserId());

@@ -6,6 +6,7 @@ import com.hhhh.dodream.domain.auth.service.AuthService;
 import com.hhhh.dodream.global.common.dto.BodyResponseDto;
 import com.hhhh.dodream.global.common.dto.ResponseDto;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,14 +24,18 @@ public class AuthController {
     }
 
     @PostMapping("/login/custom")
-    public ResponseDto customLogin(HttpServletResponse response, @RequestBody UserLoginRequestDto loginRequestDto) {
+    public ResponseDto customLogin(
+            HttpServletResponse response, @Valid @RequestBody UserLoginRequestDto loginRequestDto
+    ) {
         UserLoginResponseDto loginResponseDto = authService.customLogin(response, loginRequestDto);
 
         return BodyResponseDto.onSuccess("로그인 성공", loginResponseDto);
     }
 
     @PostMapping("/login/oauth")
-    public ResponseDto oauthLogin(HttpServletResponse response, @RequestBody UserLoginRequestDto loginRequestDto) {
+    public ResponseDto oauthLogin(
+            HttpServletResponse response, @Valid @RequestBody UserLoginRequestDto loginRequestDto
+    ) {
         UserLoginResponseDto loginResponseDto = authService.oauthLogin(response, loginRequestDto);
 
         return BodyResponseDto.onSuccess("로그인 성공", loginResponseDto);

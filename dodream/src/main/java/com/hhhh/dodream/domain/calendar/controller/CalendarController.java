@@ -6,6 +6,7 @@ import com.hhhh.dodream.domain.calendar.service.CalendarService;
 import com.hhhh.dodream.global.common.dto.BodyResponseDto;
 import com.hhhh.dodream.global.common.dto.ResponseDto;
 import com.hhhh.dodream.global.security.custom.CustomUserDetails;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class CalendarController {
 
     @PostMapping
     public ResponseDto saveCalendar(
-            @RequestBody CalendarUpsertRequestDto createRequestDto,
+            @Valid @RequestBody CalendarUpsertRequestDto createRequestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long calendarId = calendarService.save(createRequestDto, userDetails.getUserId());
@@ -53,7 +54,7 @@ public class CalendarController {
     @PatchMapping("/{calendarId}")
     public ResponseDto updateCalendar(
             @PathVariable("calendarId") Long calendarId,
-            @RequestBody CalendarUpsertRequestDto updateRequestDto,
+            @Valid @RequestBody CalendarUpsertRequestDto updateRequestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         calendarService.update(
