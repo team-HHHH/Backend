@@ -72,7 +72,7 @@ public class UserController {
         return ResponseDto.onSuccess("정보 수정 성공");
     }
 
-    @PatchMapping("/change-password")
+    @PatchMapping("/password")
     public ResponseDto updateUserPassword(
             @RequestBody UserPasswordUpdateRequestDto updateRequestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails
@@ -82,7 +82,7 @@ public class UserController {
         return ResponseDto.onSuccess("비밀번호 수정 성공");
     }
 
-    @GetMapping("/check/nickname")
+    @GetMapping("/nickname/status")
     public ResponseDto checkNickname(@AuthenticationPrincipal CustomUserDetails userDetails) {
         userService.checkNickname(userDetails.getUserId());
 
