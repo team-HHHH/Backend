@@ -20,71 +20,81 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/check/id")
-    public ResponseDto checkIdDuplication(@RequestBody LoginIdDuplicatedCheckRequestDto requestDto){
+    public ResponseDto checkIdDuplication(@RequestBody LoginIdDuplicatedCheckRequestDto requestDto) {
         UserDuplicatedResponseDto body = userService.checkLoginIdDuplication(requestDto.getLoginId());
         return BodyResponseDto.onSuccess("아이디 중복체크 성공", body);
     }
 
     @PostMapping("/check/nickname")
-    public ResponseDto checkNicknameDuplication(@RequestBody NickNameDuplicatedCheckRequestDto requestDto){
+    public ResponseDto checkNicknameDuplication(@RequestBody NickNameDuplicatedCheckRequestDto requestDto) {
         UserDuplicatedResponseDto body = userService.checkNicknameDuplication(requestDto.getNickName());
         return BodyResponseDto.onSuccess("닉네임 중복체크 성공", body);
     }
 
     @PostMapping("/check/email")
-    public ResponseDto checkEmailDuplication(@RequestBody EmailCheckRequestDto emailDto){
+    public ResponseDto checkEmailDuplication(@RequestBody EmailCheckRequestDto emailDto) {
         userService.sendAuthCode(emailDto.getEmail());
         return ResponseDto.onSuccess("이메일 인증코드 발송 성공");
     }
 
     @PostMapping("/check/emailcode")
-    public ResponseDto checkEmailCode(@RequestBody EmailAuthRequestDto requestDto){
+    public ResponseDto checkEmailCode(@RequestBody EmailAuthRequestDto requestDto) {
         UserEmailCodeCheckResponseDto userEmailCodeCheckResponseDto = userService.checkAuthCode(requestDto);
         return BodyResponseDto.onSuccess("이메일 코드 인증 성공", userEmailCodeCheckResponseDto);
     }
 
     @PostMapping("/register")
-    public ResponseDto registerUser(@RequestBody UserRegisterRequestDto userRegisterRequestDto, HttpServletResponse response){
-        userService.register(userRegisterRequestDto,response);
+    public ResponseDto registerUser(@RequestBody UserRegisterRequestDto userRegisterRequestDto, HttpServletResponse response) {
+        userService.register(userRegisterRequestDto, response);
         return ResponseDto.onSuccess("회원가입 성공");
     }
 
     @PutMapping("/register-detailed")
-    public ResponseDto registerDetail(@ModelAttribute UserRegisterDetailRequestDto detailRequestDto, @AuthenticationPrincipal CustomUserDetails userDetails){
-        userService.registerDetail(detailRequestDto,userDetails.getUserId());
+    public ResponseDto registerDetail(@ModelAttribute UserRegisterDetailRequestDto detailRequestDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        userService.registerDetail(detailRequestDto, userDetails.getUserId());
         return ResponseDto.onSuccess("회원 정보 등록 성공");
     }
 
     @GetMapping
     public ResponseDto getUser(@AuthenticationPrincipal CustomUserDetails userDetails) {
         UserInquiryResponseDto inquiryResponseDto = userService.get(userDetails.getUserId());
+
         return BodyResponseDto.onSuccess("정보 조회 성공", inquiryResponseDto);
     }
 
     @PatchMapping
-    public ResponseDto updateUser(@RequestBody UserUpdateRequestDto updateRequestDto,
-                                  @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseDto updateUser(
+            @RequestBody UserUpdateRequestDto updateRequestDto,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         userService.update(updateRequestDto, userDetails.getUserId());
+
         return ResponseDto.onSuccess("정보 수정 성공");
     }
 
     @PatchMapping("/image")
-    public ResponseDto updateProfileImage(@RequestParam("imagePath") String imagePath,
-                                          @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseDto updateProfileImage(
+            @RequestParam("imagePath") String imagePath, @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         userService.update(imagePath, userDetails.getUserId());
+
         return ResponseDto.onSuccess("이미지 수정 성공");
     }
 
     @PatchMapping("/change-password")
-    public ResponseDto updateUserPassword(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                          @RequestBody UserPasswordUpdateRequestDto updateRequestDto) {
-        userService.update(userDetails.getUserId(), updateRequestDto);
+    public ResponseDto updateUserPassword(
+            @RequestBody UserPasswordUpdateRequestDto updateRequestDto,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        userService.update(updateRequestDto, userDetails.getUserId());
+
         return ResponseDto.onSuccess("비밀번호 수정 성공");
     }
 
     @GetMapping("/check/nickname")
     public ResponseDto checkNickname(@AuthenticationPrincipal CustomUserDetails userDetails) {
         userService.checkNickname(userDetails.getUserId());
+
         return ResponseDto.onSuccess("닉네임 존재");
     }
 }

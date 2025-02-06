@@ -22,10 +22,10 @@ import org.springframework.util.ObjectUtils;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
     private final MailService mailService;
+    private final UserRepository userRepository;
     private final UserRedisService userRedisService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     public void sendAuthCode(String email) {
         if (checkEmailDuplication(email).isDuplicated()) {
@@ -90,6 +90,7 @@ public class UserService {
 
     public UserInquiryResponseDto get(Long userId) {
         UserEntity user = this.findUser(userId);
+
         return UserInquiryResponseDto.from(user);
     }
 
@@ -97,7 +98,7 @@ public class UserService {
     public void update(UserUpdateRequestDto updateRequestDto, Long userId) {
         UserEntity user = this.findUser(userId);
 
-        user.modifyProfileImage(updateRequestDto);
+        user.modify(updateRequestDto);
         userRepository.save(user);
     }
 
@@ -109,7 +110,7 @@ public class UserService {
     }
 
     @Transactional
-    public void update(Long userId, UserPasswordUpdateRequestDto updateRequestDto) {
+    public void update(UserPasswordUpdateRequestDto updateRequestDto, Long userId) {
         UserEntity user = this.findUser(userId);
 
         validateAndUpdatePassword(updateRequestDto, user);
@@ -138,6 +139,7 @@ public class UserService {
     private void validateAndUpdatePassword(UserPasswordUpdateRequestDto updateRequestDto, UserEntity user) {
         if (passwordEncoder.matches(updateRequestDto.getOriginPw(), user.getPassword())) {
             String encodedNewPw = passwordEncoder.encode(updateRequestDto.getNewPw());
+
             user.modifyPassword(encodedNewPw);
             userRepository.save(user);
         } else {

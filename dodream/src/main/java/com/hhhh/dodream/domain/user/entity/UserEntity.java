@@ -11,8 +11,8 @@ import static com.hhhh.dodream.global.common.utils.LambdaUtils.updateStringLambd
 @Entity
 @Getter
 @Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "user")
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserEntity {
     @Id
@@ -49,7 +49,7 @@ public class UserEntity {
                 .build();
     }
 
-    public void modifyProfileImage(UserUpdateRequestDto updateRequestDto) {
+    public void modify(UserUpdateRequestDto updateRequestDto) {
         updateStringLambda(updateRequestDto.getNickname(), nickname -> this.nickname = nickname);
         updateStringLambda(updateRequestDto.getAddress(), address -> this.address = address);
         updateStringLambda(updateRequestDto.getEmail(), email -> this.email = email);
