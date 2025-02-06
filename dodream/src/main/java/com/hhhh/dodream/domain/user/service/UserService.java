@@ -88,6 +88,7 @@ public class UserService {
         user.registerDetail(detailRequestDto);
     }
 
+    @Transactional(readOnly = true)
     public UserInquiryResponseDto get(Long userId) {
         UserEntity user = this.findUser(userId);
 
@@ -109,6 +110,7 @@ public class UserService {
         validateAndUpdatePassword(updateRequestDto, user);
     }
 
+    @Transactional(readOnly = true)
     public void checkNickname(Long userId) {
         UserEntity user = findUser(userId);
 

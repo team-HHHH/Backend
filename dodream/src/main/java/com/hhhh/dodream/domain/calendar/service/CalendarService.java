@@ -20,6 +20,7 @@ public class CalendarService {
     private final UserRepository userRepository;
     private final CalendarRepository calendarRepository;
 
+    @Transactional(readOnly = true)
     public List<CalendarInquiryResponseDto> get(
             Integer year,
             Integer month,
@@ -37,6 +38,7 @@ public class CalendarService {
 
     }
 
+    @Transactional(readOnly = true)
     public List<CalendarInquiryResponseDto> get(Long userId) {
         List<CalendarEntity> calendars = calendarRepository.findAllByUserId(userId);
 
