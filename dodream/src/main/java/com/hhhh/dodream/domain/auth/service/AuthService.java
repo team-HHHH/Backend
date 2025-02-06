@@ -161,7 +161,7 @@ public class AuthService {
         if (optionalUser.isPresent()) {
             return optionalUser.get();
         } else {
-            loginRequestDto.setPassword(passwordEncoder.encode(loginRequestDto.getPassword()));
+            loginRequestDto.encodePassword(passwordEncoder.encode(loginRequestDto.getPassword()));
             UserEntity user = UserEntity.from(loginRequestDto);
             userRepository.save(user);
 

@@ -1,10 +1,11 @@
 package com.hhhh.dodream.domain.user.dto.request;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserPasswordUpdateRequestDto {
     private String originPw;
     private String newPw;

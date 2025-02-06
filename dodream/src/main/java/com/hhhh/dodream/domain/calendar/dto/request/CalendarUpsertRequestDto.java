@@ -1,13 +1,14 @@
 package com.hhhh.dodream.domain.calendar.dto.request;
 
 import com.hhhh.dodream.domain.calendar.entity.embedded.DateInfo;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CalendarUpsertRequestDto {
     private DateInfo dateInfo;
     private String title;
