@@ -1,4 +1,4 @@
-package com.hhhh.dodream.domain.user.dto.response;
+package com.hhhh.dodream.domain.auth.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

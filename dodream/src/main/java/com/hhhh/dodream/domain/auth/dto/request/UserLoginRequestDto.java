@@ -1,4 +1,4 @@
-package com.hhhh.dodream.domain.user.dto.request;
+package com.hhhh.dodream.domain.auth.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,7 +1,7 @@
-package com.hhhh.dodream.domain.user.service;
+package com.hhhh.dodream.domain.auth.service;
 
-import com.hhhh.dodream.domain.user.dto.request.UserLoginRequestDto;
-import com.hhhh.dodream.domain.user.dto.response.UserLoginResponseDto;
+import com.hhhh.dodream.domain.auth.dto.request.UserLoginRequestDto;
+import com.hhhh.dodream.domain.auth.dto.response.UserLoginResponseDto;
 import com.hhhh.dodream.domain.user.entity.UserEntity;
 import com.hhhh.dodream.domain.user.repository.UserRepository;
 import com.hhhh.dodream.global.common.enums.KeyPrefixEnum;
@@ -39,7 +39,11 @@ public class AuthService {
 
         String role = jwtUtil.getRole(refreshToken);
 
-        this.setJWT(userId, role, response);
+        this.setJWT(
+                response,
+                userId,
+                role
+        );
     }
 
     public UserLoginResponseDto customLogin(HttpServletResponse response, UserLoginRequestDto loginRequestDto) {
@@ -50,7 +54,11 @@ public class AuthService {
             throw new VerificationException("로그인에 실패했습니다.");
         }
 
-        this.setJWT(user.getId(), user.getRole(), response);
+        this.setJWT(
+                response,
+                user.getId(),
+                user.getRole()
+        );
 
         return this.checkFirstLogin(user);
     }
@@ -59,20 +67,27 @@ public class AuthService {
     public UserLoginResponseDto oauthLogin(HttpServletResponse response, UserLoginRequestDto loginRequestDto) {
         UserEntity user = findOrCreateUser(loginRequestDto);
 
-        this.setJWT(user.getId(), user.getRole(), response);
+        this.setJWT(
+                response,
+                user.getId(),
+                user.getRole()
+        );
 
         return this.checkFirstLogin(user);
     }
 
     public void logout(HttpServletResponse response, String accessToken) {
         SecurityContextHolder.clearContext();
-
-        clearResponseHeaders(response);
+        response.setHeader("Authorization", null);
+        response.setHeader("Refresh", null);
 
         Long userId = jwtUtil.getUserId(accessToken);
 
-        redisService.setKeyWithExpiration(KeyPrefixEnum.LOGOUT_ACCESS.getKeyPrefix() + userId,
-                accessToken, jwtUtil.getExpirationInMillis(accessToken));
+        redisService.setKeyWithExpiration(
+                KeyPrefixEnum.LOGOUT_ACCESS.getKeyPrefix() + userId,
+                accessToken,
+                jwtUtil.getExpirationInMillis(accessToken)
+        );
         redisService.deleteKey(KeyPrefixEnum.REFRESH.getKeyPrefix() + userId);
     }
 
@@ -109,14 +124,32 @@ public class AuthService {
         }
     }
 
-    public void setJWT(Long userId, String role, HttpServletResponse response) {
+    private void setJWT(
+            HttpServletResponse response,
+            Long userId,
+            String role
+    ) {
         long accessTokenTTL = 600000L;
-        String newAccessToken = jwtUtil.createToken("access", userId, role, accessTokenTTL);
+        String newAccessToken = jwtUtil.createToken(
+                "access",
+                userId,
+                role,
+                accessTokenTTL
+        );
 
         long refreshTokenTTL = 86400000L;
-        String newRefreshToken = jwtUtil.createToken("refresh", userId, role, refreshTokenTTL);
+        String newRefreshToken = jwtUtil.createToken(
+                "refresh",
+                userId,
+                role,
+                refreshTokenTTL
+        );
 
-        redisService.setKeyWithExpiration(KeyPrefixEnum.REFRESH.getKeyPrefix() + userId, newRefreshToken, refreshTokenTTL);
+        redisService.setKeyWithExpiration(
+                KeyPrefixEnum.REFRESH.getKeyPrefix() + userId,
+                newRefreshToken,
+                refreshTokenTTL
+        );
 
         response.setHeader("Authorization", "Bearer " + newAccessToken);
         response.setHeader("Refresh", newRefreshToken);
@@ -131,12 +164,8 @@ public class AuthService {
             loginRequestDto.setPassword(passwordEncoder.encode(loginRequestDto.getPassword()));
             UserEntity user = UserEntity.from(loginRequestDto);
             userRepository.save(user);
+
             return user;
         }
-    }
-
-    private static void clearResponseHeaders(HttpServletResponse response) {
-        response.setHeader("Authorization", null);
-        response.setHeader("Refresh", null);
     }
 }

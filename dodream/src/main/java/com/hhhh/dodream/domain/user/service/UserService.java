@@ -7,7 +7,6 @@ import com.hhhh.dodream.domain.user.dto.response.UserInquiryResponseDto;
 import com.hhhh.dodream.domain.user.entity.UserEntity;
 import com.hhhh.dodream.domain.user.repository.UserRepository;
 import com.hhhh.dodream.global.common.service.MailService;
-import com.hhhh.dodream.global.common.service.S3ImageService;
 import com.hhhh.dodream.global.common.utils.RandomUtils;
 import com.hhhh.dodream.global.exception.kind.agreed_exception.DuplicatedException;
 import com.hhhh.dodream.global.exception.kind.agreed_exception.MissingDataException;
@@ -23,13 +22,10 @@ import org.springframework.util.ObjectUtils;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private static final String USER_IMAGE_PREFIX = "user_image/";
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final S3ImageService s3ImageService;
     private final MailService mailService;
     private final UserRedisService userRedisService;
-    private final AuthService authService;
 
     public void sendAuthCode(String email) {
         if (checkEmailDuplication(email).isDuplicated()) {
@@ -76,10 +72,11 @@ public class UserService {
             throw new VerificationException("이메일 인증이 되지 않았습니다");
         }
         String encodedPassword = passwordEncoder.encode(userRegisterRequestDto.getPassword());
-        UserEntity user = userRepository.save(
-                new UserEntity(userRegisterRequestDto.getEmail(), userRegisterRequestDto.getLoginId(),
-                        encodedPassword));
-        authService.setJWT(user.getId(), user.getRole(), response);
+        userRepository.save(new UserEntity(
+                userRegisterRequestDto.getEmail(),
+                userRegisterRequestDto.getLoginId(),
+                encodedPassword)
+        );
     }
 
     @Transactional

@@ -1,6 +1,6 @@
 package com.hhhh.dodream.domain.user.entity;
 
-import com.hhhh.dodream.domain.user.dto.request.UserLoginRequestDto;
+import com.hhhh.dodream.domain.auth.dto.request.UserLoginRequestDto;
 import com.hhhh.dodream.domain.user.dto.request.UserRegisterDetailRequestDto;
 import com.hhhh.dodream.domain.user.dto.request.UserUpdateRequestDto;
 import jakarta.persistence.*;
