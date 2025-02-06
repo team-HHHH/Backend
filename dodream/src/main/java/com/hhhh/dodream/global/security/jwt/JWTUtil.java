@@ -1,4 +1,4 @@
-package com.hhhh.dodream.global.security;
+package com.hhhh.dodream.global.security.jwt;
 
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +43,12 @@ public class JWTUtil {
                 .parseSignedClaims(token).getPayload().get("category", String.class);
     }
 
-    public String createToken(String category, Long userId, String role, Long expiredMs) {
+    public String createToken(
+            String category,
+            Long userId,
+            String role,
+            Long expiredMs
+    ) {
         return Jwts.builder()
                 .claim("category", category).claim("userId", userId)
                 .claim("role", role).issuedAt(new Date(System.currentTimeMillis()))

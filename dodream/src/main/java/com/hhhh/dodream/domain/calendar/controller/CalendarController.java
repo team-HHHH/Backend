@@ -5,7 +5,7 @@ import com.hhhh.dodream.domain.calendar.dto.response.CalendarInquiryResponseDto;
 import com.hhhh.dodream.domain.calendar.service.CalendarService;
 import com.hhhh.dodream.global.common.dto.BodyResponseDto;
 import com.hhhh.dodream.global.common.dto.ResponseDto;
-import com.hhhh.dodream.global.security.CustomUserDetails;
+import com.hhhh.dodream.global.security.custom.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

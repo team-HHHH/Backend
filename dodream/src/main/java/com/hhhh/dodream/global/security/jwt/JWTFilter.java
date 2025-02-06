@@ -1,9 +1,10 @@
-package com.hhhh.dodream.global.security;
+package com.hhhh.dodream.global.security.jwt;
 
 import com.hhhh.dodream.global.common.enums.KeyPrefixEnum;
 import com.hhhh.dodream.global.common.service.RedisService;
 import com.hhhh.dodream.global.exception.kind.error_exception.ExpiredTokenException;
 import com.hhhh.dodream.global.exception.kind.error_exception.InvalidTokenException;
+import com.hhhh.dodream.global.security.custom.CustomUserDetails;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -29,11 +30,16 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
         String authorization = request.getHeader("Authorization");
 
         if (ObjectUtils.isEmpty(authorization) || !authorization.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
+
             return;
         }
 

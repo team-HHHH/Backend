@@ -3,10 +3,10 @@ package com.hhhh.dodream.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhhh.dodream.global.common.service.RedisService;
-import com.hhhh.dodream.global.security.CustomAuthenticationEntryPoint;
-import com.hhhh.dodream.global.security.ExceptionHandlingFilter;
-import com.hhhh.dodream.global.security.JWTFilter;
-import com.hhhh.dodream.global.security.JWTUtil;
+import com.hhhh.dodream.global.security.custom.CustomAuthenticationEntryPoint;
+import com.hhhh.dodream.global.security.custom.CustomExceptionHandlingFilter;
+import com.hhhh.dodream.global.security.jwt.JWTFilter;
+import com.hhhh.dodream.global.security.jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -62,7 +62,7 @@ public class SecurityConfig {
 
         http
                 .addFilterBefore(new JWTFilter(jwtUtil, redisService), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new ExceptionHandlingFilter(objectMapper), JWTFilter.class);
+                .addFilterBefore(new CustomExceptionHandlingFilter(objectMapper), JWTFilter.class);
 
         return http.build();
     }

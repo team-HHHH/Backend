@@ -10,7 +10,7 @@ import com.hhhh.dodream.global.exception.kind.agreed_exception.VerificationExcep
 import com.hhhh.dodream.global.exception.kind.error_exception.DataFoundException;
 import com.hhhh.dodream.global.exception.kind.error_exception.ExpiredTokenException;
 import com.hhhh.dodream.global.exception.kind.error_exception.InvalidTokenException;
-import com.hhhh.dodream.global.security.JWTUtil;
+import com.hhhh.dodream.global.security.jwt.JWTUtil;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

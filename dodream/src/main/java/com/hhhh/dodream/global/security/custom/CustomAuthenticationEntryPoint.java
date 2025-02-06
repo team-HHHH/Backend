@@ -1,8 +1,7 @@
-package com.hhhh.dodream.global.security;
+package com.hhhh.dodream.global.security.custom;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hhhh.dodream.global.common.dto.ResponseDto;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
@@ -19,10 +18,13 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     }
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException authException
+    ) throws IOException {
         response.setCharacterEncoding("utf-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(objectMapper.writeValueAsString(ResponseDto.of(403, "인증되지 않은 사용자 접근")));
-
     }
 }

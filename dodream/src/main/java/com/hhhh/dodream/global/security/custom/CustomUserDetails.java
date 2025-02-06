@@ -1,4 +1,4 @@
-package com.hhhh.dodream.global.security;
+package com.hhhh.dodream.global.security.custom;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,6 +22,7 @@ public class CustomUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority(role));
+
         return authorities;
     }
 

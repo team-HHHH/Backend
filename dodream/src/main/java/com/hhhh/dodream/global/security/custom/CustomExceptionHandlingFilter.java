@@ -1,4 +1,4 @@
-package com.hhhh.dodream.global.security;
+package com.hhhh.dodream.global.security.custom;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,15 +12,19 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-public class ExceptionHandlingFilter extends OncePerRequestFilter {
+public class CustomExceptionHandlingFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
 
-    public ExceptionHandlingFilter(ObjectMapper objectMapper) {
+    public CustomExceptionHandlingFilter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
         } catch (CustomException e) {
@@ -32,6 +36,5 @@ public class ExceptionHandlingFilter extends OncePerRequestFilter {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(objectMapper.writeValueAsString(ResponseDto.of(e.getCode(), e.getMessage())));
-
     }
 }

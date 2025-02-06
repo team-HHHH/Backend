@@ -7,7 +7,7 @@ import com.hhhh.dodream.domain.user.dto.response.UserInquiryResponseDto;
 import com.hhhh.dodream.domain.user.service.UserService;
 import com.hhhh.dodream.global.common.dto.BodyResponseDto;
 import com.hhhh.dodream.global.common.dto.ResponseDto;
-import com.hhhh.dodream.global.security.CustomUserDetails;
+import com.hhhh.dodream.global.security.custom.CustomUserDetails;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

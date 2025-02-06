@@ -7,7 +7,7 @@ import com.hhhh.dodream.domain.poster.dto.response.PosterInfoResponse;
 import com.hhhh.dodream.domain.poster.service.PosterInfoService;
 import com.hhhh.dodream.global.common.dto.BodyResponseDto;
 import com.hhhh.dodream.global.common.dto.ResponseDto;
-import com.hhhh.dodream.global.security.CustomUserDetails;
+import com.hhhh.dodream.global.security.custom.CustomUserDetails;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
