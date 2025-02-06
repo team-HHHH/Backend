@@ -48,7 +48,7 @@ public class CalendarService {
     }
 
     @Transactional
-    public Long save(Long userId, CalendarUpsertRequestDto calendarRequest) {
+    public Long save(CalendarUpsertRequestDto calendarRequest, Long userId) {
         UserEntity user = userRepository.findById(userId)
                 .orElseThrow(() -> new DataFoundException("user db에 없습니다."));
 
@@ -60,9 +60,9 @@ public class CalendarService {
 
     @Transactional
     public void update(
-            Long userId,
             Long calendarId,
-            CalendarUpsertRequestDto updateRequestDto
+            CalendarUpsertRequestDto updateRequestDto,
+            Long userId
     ) {
         CalendarEntity calendar = validateCalendarWithUser(
                 calendarId,
@@ -74,7 +74,7 @@ public class CalendarService {
     }
 
     @Transactional
-    public void delete(Long userId, Long calendarId) {
+    public void delete(Long calendarId, Long userId) {
         CalendarEntity calendar = validateCalendarWithUser(
                 calendarId,
                 userId,

@@ -45,7 +45,7 @@ public class CalendarController {
             @RequestBody CalendarUpsertRequestDto createRequestDto,
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        Long calendarId = calendarService.save(userDetails.getUserId(), createRequestDto);
+        Long calendarId = calendarService.save(createRequestDto, userDetails.getUserId());
 
         return BodyResponseDto.onSuccess("캘린더 저장 성공", calendarId);
     }
@@ -57,9 +57,9 @@ public class CalendarController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         calendarService.update(
-                userDetails.getUserId(),
                 calendarId,
-                updateRequestDto
+                updateRequestDto,
+                userDetails.getUserId()
         );
 
         return ResponseDto.onSuccess("캘린더 수정 성공");
@@ -69,7 +69,7 @@ public class CalendarController {
     public ResponseDto deleteCalendar(
             @PathVariable("calendarId") Long calendarId, @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        calendarService.delete(userDetails.getUserId(), calendarId);
+        calendarService.delete(calendarId, userDetails.getUserId());
 
         return ResponseDto.onSuccess("캘린더 삭제 성공");
     }
